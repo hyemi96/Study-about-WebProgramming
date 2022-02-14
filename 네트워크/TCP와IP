@@ -1,0 +1,24 @@
+서버간 통신
+
+ip
+
+네트워크 OSI 7계층 정리(기능, 특징) [https://liveyourit.tistory.com/186](https://liveyourit.tistory.com/186)
+
+OSI7계층 이란 [https://velog.io/@dyllis/OSI-7계층-정리](https://velog.io/@dyllis/OSI-7%EA%B3%84%EC%B8%B5-%EC%A0%95%EB%A6%AC)
+
+노션 그림 참조
+
+
+R은 라우터 TTL은 현금처럼 현금이 떨어지면 더이상 찾을 수 없음
+
+LAN은 랜이라는  카드
+
+.으로 아이피를 계속해서 찾음
+
+마치 지인처럼 
+
+TCP 기술 PS를 통해서 상대 IP를 찾음
+
+SSL 
+
+https : 에서 s는 암호화 기술
