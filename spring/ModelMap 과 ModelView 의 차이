@@ -1,0 +1,18 @@
+데이터만 필요로 하고 페이지 이동이 필요가 없을때는 아작스로 통한 오브잭트를 사용하고
+
+페이지이동이 필요할때는 jstl을 사용하여  ModelAndViewd의 어트류브튜를 사용한다.
+
+
+modelandview와 ModelAttribute
+
+각각의 내용을 이야기하자면
+
+modelandview : JSP파일에서 던져지는 값을 받아 데이터 형태로 받아서 다시 반환 사용
+
+ModelAttribute : JSP파일에서 나오는 model객체에 속성값 주입 혹은 바인딩 할때 사용
+
+쉽게 말해서 modelAndView는 데이터와 이동하고자 하는 뷰페이지를 같이 저장해서 던지는 애
+
+modelAttribute는 HTTP요청을 받아서 해당 데이터만 던지는 애
+
+간단하게 설명한거 비교해보면 확연한 차이점이 있어 MAV는 데이터와"뷰" 함께 전달한다는점, 필요 데이터만 던지는것
