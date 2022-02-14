@@ -1,0 +1,27 @@
+웹 서버 프로그램이란?
+
+[https://www.youtube.com/watch?v=FZuQ7DyhRfQ](https://www.youtube.com/watch?v=FZuQ7DyhRfQ)
+
+ 클라이언트이 데이터를 요청하면 DB(서버 프로그램)이 응답을 해주는데 맨땅에 헤딩하는게 불편하여 소켓, RPC가같은게 생기면 HTTP(웹)이 생겼다.
+
+웹프로그램이란 :  서버 클라이언트 프로그램이 아니라 서버 클라이언트 프로그램을 웹 프로그램에 얻힐 수 있다는 것. 
+
+웹서버 프로그램과 서블릿의 관계 
+
+[https://www.youtube.com/watch?v=sDWFWCvbrGg](https://www.youtube.com/watch?v=sDWFWCvbrGg)
+
+서버환경 : 
+
+실행환경 : Web Server +  WAS (Web Application Server)
+
+Server App
+
+서블릿이란 : 조각난 서버어플리케이션 Server Application Let 의 약자로 생각하면 된다.
+
+이걸 공부하게 된 계기는
+
+조회된 테이블의  목록을 엑셀로 만들어 다운로드 즉, 파일로 내뱉어야했는데 그 기능을 만들어준 후 
+
+컨트롤러에서는 파일을 완성했으나  jsp로 응답을 못해줘서 에러를 뱉는 현상을 만났는데 그건 내가 스프링의 mvc서블릿의 구조를 잘 알지 못해 이뤄난 문제였다.
+
+서블릿에대하여 공부를 한 후 정리하여 올려야겠다.
