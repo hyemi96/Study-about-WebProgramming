@@ -1,0 +1,296 @@
+머신러닝, 기계가 학습한다는 의미
+
+https://brunch.co.kr/@gdhan/5 참조
+
+1. 개요
+
+⑴ 기본용어
+
+① 차원 : 벡터의 크기를 나타냄, v = (a1, ..., an)의 차원은 n임
+
+② 입력(inputs) : 입력 벡터는 입력으로 주어진 데이터를 나타내며 벡터 x = (x1, ···, xℓ)으로 표현
+
+③ 가중치(weights) : i 번째 노드와 j 번째 노드를 연결하는 가중치는 ωij로 표현
+
+○ 뉴럴 네트워크에서는 뇌의 시냅스(synapses)를 표현, ωij들은 행렬 W를 이룸
+
+④ 출력(outputs) : y = (y1, ···, yn) = y(x, W)
+
+⑤ 목표값(targets) : t = (t1, ···, tn), 지도학습 알고리즘은 정답값을 통해서 학습하므로 꼭 필요
+
+⑥ 활성화 함수(activation function) g(·) : 뉴런(neuron)이 가중된 입력값에 대해 활성화되는 것을 결정
+
+○ 임계함수(threshold)
+
+⑦ 오류(error) : 오류를 통해서 알고리즘의 출력값(y)과 실제 목표값(t) 간의 거리를 계산
+
+⑵ 인공지능의 의미
+
+① 인공지능 ⊂ 머신러닝 ⊂ 인공신경망 ⊂ 딥러닝
+
+○ 인공지능(artificial intelligence) : 인간과 유사하게 사고하는 컴퓨터 지능을 일컫는 포괄적 개념
+
+○ 머신러닝(machine learning) : 데이터의 학습을 통해 문제 해결에 적합한 모델을 만들어내는 기법 
+
+○ 1959년 Arthur Samuel에 의해 최초로 정의됨 
+
+○ 예 : SVM, adaboost, ANN
+
+○ 인공신경망(ANN, artificial neural network) : 사람의 신경망을 모방한 머신러닝 알고리즘
+
+○ 딥러닝(deep learning) : 깊은 다층 구조의 인공신경망
+
+○ 최근 다양한 분야에서 기존 머신러닝 기법들 대부분을 압도하는 성능을 보이고 있음
+
+② 강한 인공지능과 약한 인공지능
+
+⑶ 종류
+
+① 지도 학습(supervised learning)
+
+○ 문제-정답 쌍 {(xi, yi)}로부터 학습하는 방식 
+
+○ 예 : 조건부 확률, 회귀함수, supervised classification
+
+② 강화 학습(reinforcement learning)
+
+○ 정답을 묵시적으로 제공받음 : 즉, 정답의 단서가 reward 형태로 제공됨 
+
+○ 예 : 클러스터링, 차원 축소, 토픽 모델링
+
+③ 비지도 학습(unsupervised learning) 
+
+○ 정답을 제공받지 않음
+
+○ π (action | state)
+
+④ ① ~ ③과 같은 종류뿐만 아니라 여러 종류가 있음
+
+○ representation learning
+
+○ active learning
+
+○ online learning, incremental learning, never-ending learning
+
+○ curriclum learning : 쉬운 단계에서 어려운 단계로 학습시키는 방법
+
+○ few-shot learning, one-shot learning
+
+○ multi-instance learning, mult-label learning, distributional learning
+
+○ meta learning : learning → learn 
+
+○ metric learning, kernel learning
+
+⑷ 예시
+
+① 게임 : Chess, AlphaGo, StarCraft
+
+② 챗봇 : Siri, Alexa, Google Assistant
+
+③ 이미지 분석 : TikTok, Snapchat 
+
+④ 추천 시스템 : Spotify (음악), Netflix (영화), Youtube (비디오), TikTok (숏 비디오)
+
+⑤ 자율주행 : Waymo, Tesla
+
+⑥ 생물학 연구 : Alphafold 
+
+⑸ 가중치 공간
+
+
+ 
+
+Figure. 1. 가중치 공간에서의 두 뉴런의 위치2
+
+ 
+
+⑹ 차원의 저주 
+
+① 초구 (Hyper-sphere)
+
+○ 정의 : 임의의 n 차원에서 원점으로부터 거리가 1인 점들의 집합
+
+○ 초구의 부피는 n > 2π 이후로 차원이 증가함에 따라 부피가 0으로 수렴
+
+○ Vn = (2π/n) Vn-2
+
+○ 시사점 : 차원이 증가함에 따라 점점 많은 데이터가 단위초입방체에 들어간다는 의미 
+
+② 차원의 저주(curse of dimension)
+
+○ 입력들의 거리가 일정하게 유지되기 위하여,
+
+○ 입력 차원이 점점 커지면 머신러닝 알고리즘을 일반화시키는 데 기하급수적으로 더 많은 데이터가 필요해지는 것
+
+ 
+
+ 
+
+2. 머신러닝 알고리즘 평가
+
+⑴ 오버피팅 (Overfitting)
+
+① 오버 트레이닝
+
+ 
+
+
+Figure. 2. 오버피팅의 효과로 노이즈까지 일반화한 함수3
+
+ 
+
+○ 머신러닝에서 오버 트레이닝 (Over-training)은 언더 트레이닝 (Under-training)만큼이나 위험
+
+○ 인공신경망을 오버 트레이닝하면 오버핏하게 되며, 데이터의 오류와 부정확성조차 학습
+
+○ 예측의 정확도가 떨어짐
+
+② 오버피팅 회피 전략
+
+○ 인공신경망이 오버핏되기 전에 학습 과정을 멈추는 전략
+
+○ 매 학습마다 에러 텀을 입력하는 전략
+
+⑵ 신경망 평가
+
+① 정의 : 샘플 밖의 데이터를 통해 인공신경망이 얼마나 잘 일반화되었는지를 평가하는 것
+
+② 데이터셋
+
+○ 트레이닝 데이터(training data) : 주어진 샘플에서 트레이닝에 사용되는 데이터 
+
+○ 테스팅 데이터(testing data) : 학습모델을 평가하기 위해 이용되는, 트레이닝에서 사용되지 않은 데이터 
+
+
+
+출처: https://nate9389.tistory.com/1138 [정빈이의 공부방]
+
+
+○ 밸리데이션 세트(validation set) : 다른 표본집단에서 가져온 세 번째 데이터. 오버피팅을 확인하기 위함 
+
+○ 트레이닝 데이터와 테스팅 데이터는 in-sample data로 분류됨
+
+○ 밸리데이션 세트는 out-of-sample data로 분류됨 
+
+③ 데이터 세트 선택
+
+○ 충분한 데이터가 있을 시 : 트레이닝:테스팅:밸리데이션을 50:25:25, 60:20:20, 50:30:20으로 적용함
+
+○ 충분한 데이터가 부족 시 : 특정 데이터를 트레이닝, 테스팅, 밸리데이션으로 중복해서 이용. 크게 3가지가 있음 
+
+④ 크로스 밸리데이션(cross validation, rotation estimation, out-of-sample testing)
+
+○ 정의 : 주어진 데이터를 resampling 하여 training set, testing set, validation set을 할당하는 것
+
+○ 종류 1. exhaustive cross-validation : 주어진 조건에서 모든 가능한 resampling에 대하여 하는 크로스 밸리데이션
+
+○ 1-1. 리브원아웃(leave-one-out, LOOCV)
+
+ 
+
+
+Figure. 3. leave-one-out5
+
+ 
+
+○ 1-2. 리브섬아웃(leave-some-out) 
+
+○ 종류 2. non-exhaustive cross-validation
+
+○ 2-1. 멀티폴드(multi-fold) : m-fold cross validation이라고도 함
+
+ 
+
+
+Figure. 4. m-fold cross validation6
+
+ 
+
+
+Figure. 5. m-fold cross validation4
+
+ 
+
+○ 1st. 주어진 샘플을 m개의 파트로 분류 
+
+○ 2nd. m-1개의 파트는 파라미터를 계산하는 데 이용
+
+○ 3rd. 나머지 1개의 파트는 퍼포먼스를 확인하는 데 사용
+
+○ 4th. 이를 서로 다른 조합에 대해 m번 반복
+
+○ 5th. 평균을 취하여 최종 추정량을 결정 
+
+○ 일반적으로 10-fold cross validation이 사용됨
+
+○ 2-2. holdout method 
+
+○ 2-3. repeated random sub-sampling validation
+
+○ 응용 1. early stopping : 모델이 주어진 데이터를 overfit하지 않게 할 수 있음
+
+ 
+
+
+Figure. 6. validation과 early stopping7
+
+ 
+
+○ 응용 2. hyperparameter tuning : 사용자에 의해 설정된 파라미터를 hyperparameter라고 함
+
+○ 응용 3. feature subset problem
+
+⑶ 혼동 행렬 (confusion matrix)
+
+ 
+
+
+Figure. 7. 혼동 행렬
+
+ 
+
+① 7은 C1으로 분류돼야 할 문제에서 C1으로 예측한 횟수를 나타냄
+
+② 정확도 (Accuracy) := (7+8+9) ÷ (1+2+3+4+5+6+7+8+9) = 24/45
+
+⑷ 정확도 지표
+
+① 참 긍정 (True Positive) #TP = 7+8+9 = 24
+
+② 거짓 긍정 (False Positive) #FP = 1+2+3+4+5+6 = 21
+
+③ 참 부정 (True Negative) #TN : 부정 예제에 대해 올바르게 다른 클래스라고 예상한 경우
+
+④ 거짓 부정 (False Negative) #FN : 부정 예제에 대해 같은 클래스라고 잘못 예상한 경우
+
+
+ 
+⑤ 정확도 (Accuracy) =(#TP + #TN) ÷ (#TP + #FP + #TN + #FN)
+
+⑥ 민감도 (Sensitivity) = #TP ÷ (#TP + #FN)
+
+⑦ 특이도 (Specificity) = #TN ÷ (#TN + #FP)
+
+⑧ 정밀도 (Precision) = #TP ÷ (#TP + #FP)
+
+⑨ 재현율 (Recall) = #TP ÷ (#TP + #FN)
+
+⑩ F1 = 2 × 정밀도 × 재현율 ÷ (정밀도 + 재현율) = #TP ÷ [ #TP + (#FN + #FP)/2 ]
+
+⑸ 수신자 조작 특성 곡선
+
+⑹ 데이터 입력에 대한 요인
+
+① GIGO(garbage in garbage out) : 무가치한 데이터를 넣으면 무가치한 데이터가 나온다는 의미
+
+② 불균형 데이터 세트
+
+⑺ 정밀도, 진실도
+
+
+
+출처: https://nate9389.tistory.com/1138 [정빈이의 공부방]
+
+
+http://www.datasolution.kr/ 참조
