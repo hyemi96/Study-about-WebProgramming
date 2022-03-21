@@ -15,12 +15,12 @@ Pise 에 들어가면 소스랑 엔진(tomcat)폴더가 각각 있고 :idk자바
 
 예시)
 root@dev:/home/0000# cd /
-root@dev:/# cd /pise/tomcat/tomcatmgr/bin/
-root@dev:/pise/tomcat/tomcatmgr/bin# ls
+root@dev:/# cd /pise/tomcat/tommgr/bin/
+root@dev:/pise/tomcat/tommgr/bin# ls
 bootstrap.jar  catalina-tasks.xml  commons-daemon.jar            [configtest.sh](http://configtest.sh/)  [digest.sh](http://digest.sh/)            setclasspath.bat  [shutdown.sh](http://shutdown.sh/)  tomcat-juli.jar       [tool-wrapper.sh](http://tool-wrapper.sh/)
 catalina.bat   ciphers.bat         commons-daemon-native.tar.gz  [daemon.sh](http://daemon.sh/)      hs_err_pid24019.log  [setclasspath.sh](http://setclasspath.sh/)   startup.bat  tomcat-native.tar.gz  version.bat
 [catalina.sh](http://catalina.sh/)    [ciphers.sh](http://ciphers.sh/)          configtest.bat                digest.bat     hs_err_pid32567.log  shutdown.bat      [startup.sh](http://startup.sh/)   tool-wrapper.bat      [version.sh](http://version.sh/)
-root@dev:/pise/tomcat/tomcatmgr/bin# ./startup.sh - - -명령어
+root@dev:/pise/tomcat/tommgr/bin# ./startup.sh - - -명령어
 Archive:  /pise//www//mgr-1.0.0.war
 replace /pise//www//META-INF/MANIFEST.MF? [y]es, [n]o, [A]ll, [N]one, [r]ename: y
 inflating: /pise//www/mgr/META-INF/MANIFEST.MF
@@ -69,7 +69,7 @@ Insert 상태에서 파일 수정 그런 후 esc를 누른다.
 War 파일 형식으로 선택해서 묶어서 바탕화면에 만들고 그 파일을 리눅스터미널 툴에 올린다.
 
 root@dev:/# ls
-app  bin  boot  cdrom  data  dev  etc  home  lib  lib32  lib64  libx32  logs  lost+found  media  mnt  opt  pise  proc  root  run  sbin  snap  srv  swapfile  sys  tmp  usr  var
+app  bin ~~~~  opt  pise  proc  root  run  sbin  snap  srv  swapfile  sys  tmp  usr  var
 root@dev:/# cd logs/
 b2c/ did/ awmgr/ api/
 root@dev:/# cd logs/mgr/mgr.log
