@@ -1,0 +1,22 @@
+정의 
+: key 값과 value 값을 하나의 싸으로 관리하므로 Eunmeration 이나 Iteration 개체를 사용하여 데이터를 추출하지 않고
+해당 키에 대한 데이터 값을 추출하는 Connection
+
+
+장점
+: 동기화가 포함되지 않으므로 HashTable에 비해 속도가 빠름
+
+
+단점
+: value 값의 중복은 허락하지만 key값의 중복은 허락하지 않으므로 null을 가지는 key가 두개 일 수는 없다.
+
+
+메소드 종류
+
+- put(key, value)   : 삽입
+- put(기존key , 다른 value) : 기존 key를 다른 value값으로 수정(가능)
+- get() : 지정 키에 해당하는 데이터 value 값을 반환
+- containsKet(key) : 지정 키가 존재하는지의 여부를 true / false로 반환
+- containsValue(value) : 지정 value 가 존재하는지의 여부를 true/ false로 반한
+- size() : HashMap 객체의 요소 갯수를 반환
+- isEmpty() : HashMap 이 비어있는지의 여부를 true/faluse 로 반환
