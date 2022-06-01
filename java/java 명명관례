@@ -48,3 +48,9 @@ public int getMaxlterations(){
 - class well {
   private int depth;
 }(o)
+- 로컬 변수와 private 접근 제한자가 갖는 클래스 변수를 쉽게 구별 가능
+- 부가적으로 setter 메소드에서의 이름 충돌 문제를 해결해줌
+
+*자바 예약어 : 기능이 이미 정해져 있는 키워드들
+
+
