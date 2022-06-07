@@ -257,20 +257,20 @@
 				                                    <h4 class="` + className + `">
 				                                        <a class="accordion-toggle collapsed" data-parent="#accordion`+ (i+1)+ `" id="`+ (i+1)+ `" href="#todo`+ (i+1)+ `" aria-expanded="false" onClick="showClick(this.id);">
 				                                        <span class="todoList-badge" >`+ dispName +`</span> 
-				                                        ` + data.TodoLists[i]['qaTitle'] + ` 
+				                                        ` + data.TodoLists[i]['todoTitle'] + ` 
 				                                        <span class="todoList-data">` + data.TodoLists[i]['createdAt'] + `</span></a>
 				                                    </h4>
 				                                </div>
 				                                <div id="todoListBody`+ (i+1)+ `" role="tabpanel" aria-expanded="false" class="todoContentsHide">
 				                                    <div class="todoList-body">
-				                                        <p> ` + data.TodoLists[i]['qaContents'] + `</p>
+				                                        <p> ` + data.TodoLists[i]['tdContents'] + `</p>
 				                                    </div>
 						`;
 						
 						if( parseInt( data.TodoLists[i]['replyCount'] ) > 0 ){
 							
 							var subData = "";
-							subData ={"qaSeq": data.TodoLists[i]['seq'] };
+							subData ={"todoSeq": data.TodoLists[i]['seq'] };
 							
 	 						$.ajax({
 					            url: "/m/ajaxTodoReplyList.do",
@@ -286,7 +286,7 @@
 							            	innerHTML += `
 					                                    <div class="panel-body">
 					                                        <p class="mb-2">` + arg.TodoReplyLists[j]['contents'] + `</p>
-					                                        <span class="todoList-data">` + arg.TodoReplyLists[j]['qaReplyCreatedAt'] + `</span>
+					                                        <span class="todoList-data">` + arg.TodoReplyLists[j]['todoReplyCreatedAt'] + `</span>
 					                                	</div>
 			           								`;
 
