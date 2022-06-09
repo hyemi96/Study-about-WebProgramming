@@ -311,16 +311,16 @@
 		
 
                     }
-                    document.getElementById("todoList").html(innerHTML);
+                    document.getElementById("todoList").innerHTML(innerHTML);
 
                 } else {
-                    document.getElementById("todoList").html(`<div class="card-body">조회 내역이 없습니다.</div>`);
+                    document.getElementById("todoList").innerHTML(`<div class="card-body">조회 내역이 없습니다.</div>`);
 
                 }
 
             },
             error: function() {
-                document.getElementById("todoList").html(`<div class="card-body">서버와의 통신에서 에러가 발생했습니다.</div>`);
+                document.getElementById("todoList").innerHTML(`<div class="card-body">서버와의 통신에서 에러가 발생했습니다.</div>`);
             }
 
         });
