@@ -96,22 +96,123 @@
 
 
 </style>
-
-
 <script type="text/javascript">
 	$(document).ready(function() {
+		
 		//현재 날짜 표기
 		getToday();
-		//브라우저별 통계 비율
+		
+		containerOptionChange();
+		
+		siteChange(); //웹선택
+		
+		webPieHighcharts();
+		
+		mobilePieHighcharts();
+		
+		weekStatisticHighcharts();
+		
+
+	});
+
+	function getToday() {
+		let today = new Date();
+		let year = today.getFullYear(); // 2022
+		let month = today.getMonth()+ 1; // month에 1을 더하는 이유는 0부터 시작하기때문 
+		let date = today.getDate(); //  (일)
+		let day = today.getDay(); // 3 (수요일)
+		let hours = today.getHours(); 
+		let minutes = today.getMinutes();
+
+		let week = [ '일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일' ];
+
+		let dayOfWeek = week[new Date(today).getDay()];
+
+		document.getElementById('todayData').innerHTML = year + '년 ' + month + '월 ' + date + '일 '+ dayOfWeek;
+	
+		$('#weekTodayDate').html(month + '/' + date + ' ' + hours + ":" + minutes);
+	}
+	
+	function siteChange(){
+		let siteSelectedText = $('#selectSite option:checked').text();
+		$('#countTitle').html(siteSelectedText);
+		
+		let optVal = $('#selectSite').val();
+		console.log(optVal);
+		
+		var sysCd = "";
+		var sysCdExt = "";
+		var osDiv = "";
+		
+		var tempArray = optVal.split(":");
+		
+		sysCd = tempArray[0];
+		sysCdExt = tempArray[1];
+		osDiv = tempArray[2];
+
+		if(optVal ==""){
+			return;
+		}else {
+			
+			console.log(sysCd);
+			console.log(sysCdExt);
+			console.log(osDiv);
+			
+			var data = {"sysCd" : sysCd, "sysCdExt" : sysCdExt, "osDiv" : osDiv}
+			
+			$.ajax({
+				url : "/control/ajaxSelectLogCnt.do",
+				data : data,
+				type : 'POST',
+				dataType : 'json',
+				contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+				success : function(arg) {
+					
+					//나온 결과로 오늘 방문수, 어제방문수, 누적 방문수로 나눠 결과를 html에 넣어준다.
+					$('#todayCnt').html(arg.TodayCnt);
+					$('#yesterdayCnt').html(arg.YesterdayCnt);
+					$('#accumulateCnt').html(arg.AccumulateCnt);
+			
+				},
+				error : function() {
+
+				}
+			});
+			
+		}
+		
+	}
+	function containerOptionChange(){
+		
+		var b2cOption = [];
+		
+		var option = $("#selectLoginStatisticOption").val();
+		
+		console.log(option);
+		
+		if(option=="day"){
+			b2cOption = ["1","2", "3", "4", "5","6","7"]; //월조회 
+		}else if(option == "month"){
+			b2cOption = [ '1월','2월', '3월','4월', '5월' , '6월' , '7월', '8월', '9월' ,'10월', '11월', '12월'];
+		}else if(option == "year"){
+			b2cOption = [ "2021", "2022"];
+		}
+		
+		 containerHighcharts(b2cOption);
+	}
+	
+	
+	function containerHighcharts(b2cOption){
+		//B2C 소셜 로그인 통계
 		Highcharts.chart('container',{
 			chart : {
 				type : 'column'
 			},
 			title : {
-				text : '소셜 로그인 비율'
+				text : 'B2C 소셜 로그인 비율'
 			},
 			xAxis : {
-				categories : [ '1월','2월', '3월','4월', '5월' , '6월' , '7월', '8월', '9월' ,'10월', '11월', '12월'] //일간/주간/월간
+				categories : b2cOption //일간/주간/월간
 			},
 			yAxis : {
 				min : 0,
@@ -167,9 +268,12 @@
 				color: '#0A6E0A'
 			} ]
 		});
-		
-		
-		// 브라우저 통계 그래프
+
+	
+	}
+	
+	// 브라우저 통계 그래프
+	function webPieHighcharts(){
 		Highcharts.chart('webPie', {
 		  chart: {
 		    type: 'pie'
@@ -177,7 +281,7 @@
 		  title: {
 		    text: 'Browser market shares. January, 2022'
 		  },
-
+	
 		  accessibility: {
 		    announceNewData: {
 		      enabled: true
@@ -186,7 +290,7 @@
 		      valueSuffix: '%'
 		    }
 		  },
-
+	
 		  plotOptions: {
 		    series: {
 		      dataLabels: {
@@ -195,12 +299,12 @@
 		      }
 		    }
 		  },
-
+	
 		  tooltip: {
 		    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
 		    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
 		  },
-
+	
 		  series: [
 		    {
 		      name: "Browsers",
@@ -465,7 +569,10 @@
 		    ]
 		  }
 		});
-		// 모바일 어플 다은로드 통계 그래프
+	}
+	
+	// 모바일 어플 다은로드 통계 그래프
+	function mobilePieHighcharts(){
 		Highcharts.chart('mobilePie', {
 		  chart: {
 		    type: 'pie'
@@ -473,7 +580,7 @@
 		  title: {
 		    text: 'APP Download market store shares. 2022'
 		  },
-
+	
 		  accessibility: {
 		    announceNewData: {
 		      enabled: true
@@ -482,7 +589,7 @@
 		      valueSuffix: '%'
 		    }
 		  },
-
+	
 		  plotOptions: {
 		    series: {
 		      dataLabels: {
@@ -491,12 +598,12 @@
 		      }
 		    }
 		  },
-
+	
 		  tooltip: {
 		    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
 		    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
 		  },
-
+	
 		  series: [
 		    {
 		      name: "OS",
@@ -667,64 +774,48 @@
 		    ]
 		  }
 		});
+	}
+	function weekStatisticHighcharts(){	
 		var title = {
-		       text: '주간 로그인 통계 그래프'   
-		    };
-		    var xAxis = {
-		       categories: ['6일전', '5일전', '4일전', '3일전', '2일전', '1일전','오늘']
-		    };
-		    var yAxis = {
-		       title: {
-		          text: '방문수'
-		       },
-		       plotLines: [{
-		          value: 0,
-		          width: 1,
-		          color: '#808080'
-		       }]
-		    };   
+	       text: '주간 로그인 통계 그래프'   
+	    };
+	    var xAxis = {
+	       categories: ['6일전', '5일전', '4일전', '3일전', '2일전', '1일전','오늘']
+	    };
+	    var yAxis = {
+	       title: {
+	          text: 'total'
+	       }, 
+	       plotLines: [{
+	          value: 0,
+	          width: 1,
+	          color: '#808080'
+	       }]
+	    };   
 
-		    var legend = {
-		       layout: 'vertical',
-		       align: 'right',
-		       verticalAlign: 'middle',
-		       borderWidth: 0
-		    };
+	    var legend = {
+	       layout: 'vertical',
+	       align: 'right',
+	       verticalAlign: 'middle',
+	       borderWidth: 0
+	    };
 
-		    var series =  [
-		       {
-		          name: '방문수',
-		          data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2]
-		       }
-		    ];
+	    var series =  [
+	       {
+	          name: '방문수',
+	          data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2]
+	       }
+	    ];
 
-		    var json = {};
+	    var json = {};
 
-		    json.title = title;
-		    json.xAxis = xAxis;
-		    json.yAxis = yAxis;
-		    json.legend = legend;
-			json.series = series;
+	    json.title = title;
+	    json.xAxis = xAxis;
+	    json.yAxis = yAxis;
+	    json.legend = legend;
+		json.series = series;
 
-			$('#weekStatistic').highcharts(json);
-	});
-
-	function getToday() {
-		let today = new Date();
-		let year = today.getFullYear(); // 2022
-		let month = today.getMonth()+ 1; // month에 1을 더하는 이유는 0부터 시작하기때문 
-		let date = today.getDate(); //  (일)
-		let day = today.getDay(); // 3 (수요일)
-		let hours = today.getHours(); // 3 (수요일)
-		let minutes = today.getMinutes();
-
-		let week = [ '일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일' ];
-
-		let dayOfWeek = week[new Date(today).getDay()];
-
-		document.getElementById('todayData').innerHTML = year + '년 ' + month + '월 ' + date + '일 '+ dayOfWeek;
-	
-		$('#weekTodayDate').html(month + '/' + date + ' ' + hours + ":" + minutes);
+		$('#weekStatistic').highcharts(json);
 	}
 </script>
 
@@ -762,42 +853,33 @@
 				<h4 class="mb-0 tx-bold tx-20">로그인 현황</h4>
 				<label class="form-label-tx mr-2 d-none">시설</label>
 				<div style="line-height: 1.2;" class="tx-primary">
-					<select class="form-select" id="siteNm" name="siteNm"
-						onChange="javascript: siteChange(this.value);">
-						<option value="">전체선택</option>
-						<option value="">B2B 웹(udid.hygera.kr)</option>
-						<option value="">B2C 웹(b2c.hygera.kr)</option>
-						<option value="">B2C Mobile APP</option>
-						<option value="">MGR 웹(umgr.hygera.kr)</option>
+					<select class="form-select" id="selectSite" name="selectSite" onChange="siteChange();">
+						<option value="B:UCLIP:WEB">B2B WEB u-Clip(udid.hygera.kr)</option>
+						<option value="B:X3:WEB">B2B WEB X-3(did.hygera.kr)</option>
+						<option value="B::APP">B2B APP</option>
+						<option value="C:UCLIP:WEB">B2C WEB(b2c.hygera.kr)</option>
+						<option value="C:UCLIP:APP" selected>B2C APP</option>
+						<option value="A::">MGR WEB(umgr.hygera.kr)</option>
 					</select>
 				</div>
 			</div>
 			<div class="border rounded">
 				<div class="p-3">
 					<div class="d-lg-flex align-items-start d-block">
-						<h2 class="mb-0 tx-bold tx-20">웹 로그인 현황 </h4>
+						<h2 class="mb-0 tx-bold tx-20" id="countTitle"></h4>
 						<h4 class="mb-0 tx-bold tx-20">오늘 방문수 </h4>
-						<h4 class="mb-0 tx-bold tx-20">
-							<span></span>
-						</h4>
 						<h4 class="mb-0 tx-bold tx-20">어제 방문수 </h4>
-						<h4 class="mb-0 tx-bold tx-20">
-							<span></span>
-						</h4>
 						<h4 class="mb-0 tx-bold tx-20">누적 방문수</h4>
-						<h4 class="mb-0 tx-bold tx-20">
-							<span></span>
-						</h4>
 					</div>
 					<div class="d-lg-flex align-items-start d-block">
 						<h4 class="mb-0 tx-bold tx-20">
-							<span>10 </span>
+							<span id="todayCnt">10 </span>
 						</h4>
 						<h4 class="mb-0 tx-bold tx-20">
-							<span>10 </span>
+							<span id="yesterdayCnt">10 </span>
 						</h4>
 						<h4 class="mb-0 tx-bold tx-20">
-							<span>100 </span>
+							<span id="accumulateCnt">100 </span>
 						</h4>
 					</div>
 				</div>
@@ -805,16 +887,15 @@
 		</div>
 
 		<div class="mg-t-35">
-
 			<div class="d-flex justify-content-between align-items-end mg-b-10">
 				<h4 class="mb-0 tx-bold tx-20">
 					<span id="todayData"></span>
 				</h4>
 				<div style="line-height: 1.2;" class="tx-primary">
-					<select class="form-select" id="" name="">
-						<option value="">일간</option>
-						<option value="" selected>월간</option>
-						<option value="">년간</option>
+					<select class="form-select" id="selectLoginStatisticOption" name="selectLoginStatisticOption" onChange="containerOptionChange();">
+						<option value="day">일간</option>
+						<option value="month" selected>월간</option>
+						<option value="year">년간</option>
 					</select>
 				</div>
 			</div>
