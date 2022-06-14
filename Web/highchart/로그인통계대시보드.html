@@ -102,7 +102,7 @@
 		//현재 날짜 표기
 		getToday();
 		
-		containerOptionChange();
+		containerHighcharts();
 		
 		siteChange(); //웹선택
 		
@@ -182,7 +182,8 @@
 		}
 		
 	}
-	function containerOptionChange(){
+	
+	function containerHighcharts(){
 		
 		var b2cOption = [];
 		
@@ -197,12 +198,9 @@
 		}else if(option == "year"){
 			b2cOption = [ "2021", "2022"];
 		}
+		//ajax를 통해 데이터를 가져온 후 data를 그래프에 넣어준다.
 		
-		 containerHighcharts(b2cOption);
-	}
-	
-	
-	function containerHighcharts(b2cOption){
+		
 		//B2C 소셜 로그인 통계
 		Highcharts.chart('container',{
 			chart : {
@@ -892,7 +890,7 @@
 					<span id="todayData"></span>
 				</h4>
 				<div style="line-height: 1.2;" class="tx-primary">
-					<select class="form-select" id="selectLoginStatisticOption" name="selectLoginStatisticOption" onChange="containerOptionChange();">
+					<select class="form-select" id="selectLoginStatisticOption" name="selectLoginStatisticOption" onChange="containerHighcharts();">
 						<option value="day">일간</option>
 						<option value="month" selected>월간</option>
 						<option value="year">년간</option>
