@@ -131,6 +131,10 @@
 		document.getElementById('todayData').innerHTML = year + '년 ' + month + '월 ' + date + '일 '+ dayOfWeek;
 	
 		$('#weekTodayDate').html(month + '/' + date + ' ' + hours + ":" + minutes);
+
+		$('#presentYear').val(year);
+		$('#presentMonth').val(month);
+		$('#presentDay').val(date);
 	}
 	
 	function siteChange(){
@@ -185,87 +189,129 @@
 	
 	function containerHighcharts(){
 		
+		var year = $('#presentYear').val();
+		var month = $('#presentMonth').val();
+		var day = $('#presentDay').val();
+		
+		var data = {"logYear" : year , "logMonth" : month, "logDt" : day };
+		
+		console.log(data);
+		
 		var b2cOption = [];
-		
+		let b2cDayOption =[];
+		var b2cDayData = [];
+	
 		var option = $("#selectLoginStatisticOption").val();
-		
 		console.log(option);
 		
-		if(option=="day"){
-			b2cOption = ["1","2", "3", "4", "5","6","7"]; //월조회 
-		}else if(option == "month"){
-			b2cOption = [ '1월','2월', '3월','4월', '5월' , '6월' , '7월', '8월', '9월' ,'10월', '11월', '12월'];
-		}else if(option == "year"){
-			b2cOption = [ "2021", "2022"];
-		}
 		//ajax를 통해 데이터를 가져온 후 data를 그래프에 넣어준다.
-		
-		
-		//B2C 소셜 로그인 통계
-		Highcharts.chart('container',{
-			chart : {
-				type : 'column'
-			},
-			title : {
-				text : 'B2C 소셜 로그인 비율'
-			},
-			xAxis : {
-				categories : b2cOption //일간/주간/월간
-			},
-			yAxis : {
-				min : 0,
-				title : {
-					text : 'Total'
+		$.ajax({
+				url : "/control/ajaxSelectB2CLoginData.do",
+				data : data,
+				type : 'POST',
+				dataType : 'json',
+				contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+				success : function(arg) {
+					console.log(arg.selectLogDtCnt);
+					//나온 결과로 b2cOption을 넣어주고 결과값 데이터를 배열로 넣어준다
+					
+					if (arg.selectLogDtCnt.length > 0) {
+		                for (var i = 0; i < arg.selectLogDtCnt.length; i++) {
+		                	b2cDayOption.push(arg.selectLogDtCnt[i]['logDt']);
+		                	b2cDayData.push( arg.selectLogDtCnt[i]['logDtCnt']);
+		            	}
+					}
+					
+					if(option=="day"){
+						
+						b2cOption = b2cDayOption; //일조회
+						
+						console.log("b2cOption : " + b2cDayOption);
+						
+					}else if(option == "month"){
+						
+						b2cOption = [ '1월','2월', '3월','4월', '5월' , '6월' , '7월', '8월', '9월' ,'10월', '11월', '12월']; //월조회 
+						
+					}else if(option == "year"){
+						
+						b2cOption = [ "2021", "2022"];
+					}
+					
+					//B2C 소셜 로그인 통계
+					Highcharts.chart('container',{
+						chart : {
+							type : 'column'
+						},
+						title : {
+							text : 'B2C 소셜 로그인 비율'
+						},
+						xAxis : {
+							categories : b2cOption //일간/주간/월간
+						},
+						yAxis : {
+							min : 0,
+							title : {
+								text : 'Total'
+							},
+							stackLabels : {
+								enabled : true,
+								style : {
+									fontWeight : 'bold',
+									color : ( // theme
+									Highcharts.defaultOptions.title.style && Highcharts.defaultOptions.title.style.color)
+											|| '#ffff00'
+								}
+				
+							}
+						},
+						legend : {
+							align : 'right',
+							x : -30,
+							verticalAlign : 'top',
+							y : 25,
+							floating : true,
+							backgroundColor : Highcharts.defaultOptions.legend.backgroundColor
+									|| 'white',
+							borderColor : '#CCC',
+							borderWidth : 1,
+							shadow : false
+						},
+						tooltip : {
+							headerFormat : '<b>{point.x}</b><br/>',
+							pointFormat : '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+						},
+						plotOptions : {
+							column : {
+								stacking : 'normal',
+								dataLabels : {
+									enabled : true
+								}
+							}
+						},
+						series : [ {
+							name : '하이제라',
+							data : [ 5, 3, 4, 7, 2, 4, 5, 6, 8, 10, 9, 8, ],
+							color: '#1E3269'
+						}, {
+							name : '카카오',
+							data : [ 2, 2, 3, 2, 1, 8, 4, 8, 7, 7, 5, 9, ],
+							color: '#FFC31E'
+						}, {
+							name : '네이버',
+							data : [ 3, 4, 4, 0, 5, 5, 8, 8, 9, 4, 8, 10, ], //데이터 값
+							color: '#0A6E0A'
+						} ]
+					});
+
+					
+					
+					
 				},
-				stackLabels : {
-					enabled : true,
-					style : {
-						fontWeight : 'bold',
-						color : ( // theme
-						Highcharts.defaultOptions.title.style && Highcharts.defaultOptions.title.style.color)
-								|| '#ffff00'
-					}
-	
+				error : function() {
+
 				}
-			},
-			legend : {
-				align : 'right',
-				x : -30,
-				verticalAlign : 'top',
-				y : 25,
-				floating : true,
-				backgroundColor : Highcharts.defaultOptions.legend.backgroundColor
-						|| 'white',
-				borderColor : '#CCC',
-				borderWidth : 1,
-				shadow : false
-			},
-			tooltip : {
-				headerFormat : '<b>{point.x}</b><br/>',
-				pointFormat : '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
-			},
-			plotOptions : {
-				column : {
-					stacking : 'normal',
-					dataLabels : {
-						enabled : true
-					}
-				}
-			},
-			series : [ {
-				name : '하이제라',
-				data : [ 5, 3, 4, 7, 2, 4, 5, 6, 8, 10, 9, 8, ],
-				color: '#1E3269'
-			}, {
-				name : '카카오',
-				data : [ 2, 2, 3, 2, 1, 8, 4, 8, 7, 7, 5, 9, ],
-				color: '#FFC31E'
-			}, {
-				name : '네이버',
-				data : [ 3, 4, 4, 0, 5, 5, 8, 8, 9, 4, 8, 10, ], //데이터 값
-				color: '#0A6E0A'
-			} ]
-		});
+			});
+		
 
 	
 	}
@@ -888,6 +934,9 @@
 			<div class="d-flex justify-content-between align-items-end mg-b-10">
 				<h4 class="mb-0 tx-bold tx-20">
 					<span id="todayData"></span>
+					<input type="hidden" id ="presentDay" value="" />
+				    <input type="hidden" id ="presentMonth" value="" />
+				    <input type="hidden" id ="presentYear" value="" />
 				</h4>
 				<div style="line-height: 1.2;" class="tx-primary">
 					<select class="form-select" id="selectLoginStatisticOption" name="selectLoginStatisticOption" onChange="containerHighcharts();">
