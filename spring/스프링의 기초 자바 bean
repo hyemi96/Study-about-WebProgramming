@@ -1,5 +1,9 @@
 bean 과 vo 필수 개념
 
+vo (Value Object)
+DAO (Data Access Object)
+Foreach 는 java5버전부터 지원
+
 map 을 기초로 만들어진게 josn 이고 잭슨이 쉽게 만든 제이슨 방식은 키와 벨류 로 된 형식으로 넘어가는 것이다.
 
 url 주소도 get 방식과 post방식이 있고,
