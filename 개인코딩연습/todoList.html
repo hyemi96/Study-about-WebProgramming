@@ -194,12 +194,46 @@
 
 
     </style>
-    <script type="text/javascript" language="javascript">
-    document.addEventListener("DOMContentLoaded", function(){
-        document.querySelector(".todoContents").classList.add ='hide';
-      //  document.querySelector("todoContentsHide").style.display ='block';
-       // todoList();
-    });
+   <!-- 나중에 파이어베이스로 서버 구축해서 만들어보기-->
+   <script src="/__/firebase/9.8.2/firebase-app.js"></script>
+   <!-- include only the Firebase features as you need -->
+   <script  src="/__/firebase/9.8.2/firebase-auth.js"></script>
+   <script  src="/__/firebase/9.8.2/firebase-database.js"></script>
+   <script  src="/__/firebase/9.8.2/firebase-firestore.js"></script>
+   <script  src="/__/firebase/9.8.2/firebase-functions.js"></script>
+   <script  src="/__/firebase/9.8.2/firebase-messaging.js"></script>
+   <script  src="/__/firebase/9.8.2/firebase-storage.js"></script>
+   <script  src="/__/firebase/9.8.2/firebase-analytics.js"></script>
+   <script  src="/__/firebase/9.8.2/firebase-remote-config.js"></script>
+   <script  src="/__/firebase/9.8.2/firebase-performance.js"></script>
+   <script> 
+	  var firebaseConfig = {
+	  apiKey: "",
+	  authDomain: ".firebaseapp.com",
+	  databaseURL: "https://.firebaseio.com",
+	  projectId: "",
+	  storageBucket: ".appspot.com",
+	  messagingSenderId: "",
+	  appId: ""
+          };
+
+         firebase.initializeApp(firebaseConfig);
+   </script>
+
+   <script>
+	  const db = firebase.firestore();
+	  db.collection('Shop').get().then((결과)=>{
+	    결과.forEach((doc)=>{
+	      console.log(doc.data())
+	    })
+          })
+   </script>
+   <script type="text/javascript" language="javascript">
+	document.addEventListener("DOMContentLoaded", function(){
+	    document.querySelector(".todoContents").classList.add ='hide';
+	    //  document.querySelector("todoContentsHide").style.display ='block';
+	    // todoList();
+	});
 
 	function todoList() {
 		
