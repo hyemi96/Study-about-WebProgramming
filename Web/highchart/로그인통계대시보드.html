@@ -47,999 +47,999 @@
 .highcharts-data-table tr:hover {
   background: #f1f7ff;
 }
-.highcharts-container {
-   overflow : visible;
-}
-.highcharts-root {
-   overflow : visible;
-}
+
 
 #container {
-   height: 400px;
+	height: 400px;
+	overflow : visible;
 }
 
 .highcharts-figure, .highcharts-data-table table {
-   min-width: 600px;
-   max-width: 100%;
-   margin: 1em auto;
+	min-width: 600px;
+	max-width: 100%;
+	margin: 1em auto;
 }
 
 .highcharts-data-table table {
-   font-family: Verdana, sans-serif;
-   border-collapse: collapse;
-   border: 1px solid #ebebeb;
-   margin: 10px auto;
-   text-align: center;
-   width: 100%;
-   max-width: 500px;
+	font-family: Verdana, sans-serif;
+	border-collapse: collapse;
+	border: 1px solid #ebebeb;
+	margin: 10px auto;
+	text-align: center;
+	width: 100%;
+	max-width: 500px;
 }
 
 .highcharts-data-table caption {
-   padding: 1em 0;
-   font-size: 1.2em;
-   color: #555;
+	padding: 1em 0;
+	font-size: 1.2em;
+	color: #555;
 }
 
 .highcharts-data-table th {
-   font-weight: 600;
-   padding: 0.5em;
+	font-weight: 600;
+	padding: 0.5em;
 }
 
 .highcharts-data-table td, .highcharts-data-table th,
-   .highcharts-data-table caption {
-   padding: 0.5em;
+	.highcharts-data-table caption {
+	padding: 0.5em;
 }
 
 .highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even)
-   {
-   background: #f8f8f8;
+	{
+	background: #f8f8f8;
 }
 
 .highcharts-data-table tr:hover {
-   background: #f1f7ff;
+	background: #f1f7ff;
 }
 
 
 </style>
 <script type="text/javascript">
-   $(document).ready(function() {
-      
-      //현재 날짜 표기
-      getToday();
-      
-      containerHighcharts();
-      
-      siteChange(); //웹선택
-      
-      webPieHighcharts();
-      
-      mobilePieHighcharts();
-      
-      weekStatisticHighcharts();
-      
-      setSiteAdress();
+	$(document).ready(function() {
+		
+		//현재 날짜 표기
+		getToday();
+		
+		containerHighcharts();
+		
+		siteChange(); //웹선택
+		
+		webPieHighcharts();
+		
+		mobilePieHighcharts();
+		
+		weekStatisticHighcharts();
+		
+		setSiteAdress();
 
-   });
+	});
 
-   function getToday() {
-      let today = new Date();
-      let year = today.getFullYear(); // 2022
-      let month = today.getMonth()+ 1; // month에 1을 더하는 이유는 0부터 시작하기때문 
-      let date = today.getDate(); //  (일)
-      let day = today.getDay(); // 3 (수요일)
-      let hours = today.getHours(); 
-      let minutes = today.getMinutes();
+	function getToday() {
+		let today = new Date();
+		let year = today.getFullYear(); // 2022
+		let month = today.getMonth()+ 1; // month에 1을 더하는 이유는 0부터 시작하기때문 
+		let date = today.getDate(); //  (일)
+		let day = today.getDay(); // 3 (수요일)
+		let hours = today.getHours(); 
+		let minutes = today.getMinutes();
 
-      let week = [ '일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일' ];
+		let week = [ '일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일' ];
 
-      let dayOfWeek = week[new Date(today).getDay()];
+		let dayOfWeek = week[new Date(today).getDay()];
 
-      document.getElementById('todayData').innerHTML = year + '년 ' + month + '월 ' + date + '일 '+ dayOfWeek;
-   
-      $('#weekTodayDate').html(month + '/' + date + ' ' + hours + ":" + minutes);
+		document.getElementById('todayData').innerHTML = year + '년 ' + month + '월 ' + date + '일 '+ dayOfWeek;
+	
+		$('#weekTodayDate').html(month + '/' + date + ' ' + hours + ":" + minutes);
 
-      $('#presentYear').val(year);
-      $('#presentMonth').val(month);
-      $('#presentDay').val(date);
-   }
-   
-   function siteChange(){
-      
-      setSiteAdress();
-      
-      let siteSelectedText = $('#selectSite option:checked').text();
-      $('#countTitle').html(siteSelectedText);
-      
-      let optVal = $('#selectSite').val();
-      
-      let sysCd = "";
-      let sysCdExt = "";
-      let osDiv = "";
-      
-      let tempArray = optVal.split(":");
-      
-      sysCd = tempArray[0];
-      sysCdExt = tempArray[1];
-      osDiv = tempArray[2];
+		$('#presentYear').val(year);
+		$('#presentMonth').val(month);
+		$('#presentDay').val(date);
+	}
+	
+	function siteChange(){
+		
+		setSiteAdress();
+		
+		let siteSelectedText = $('#selectSite option:checked').text();
+		$('#countTitle').html(siteSelectedText);
+		
+		let optVal = $('#selectSite').val();
+		
+		let sysCd = "";
+		let sysCdExt = "";
+		let osDiv = "";
+		
+		let tempArray = optVal.split(":");
+		
+		sysCd = tempArray[0];
+		sysCdExt = tempArray[1];
+		osDiv = tempArray[2];
 
-      if(optVal ==""){
-         return;
-      }else {
-         
-         console.log(sysCd);
-         console.log(sysCdExt);
-         console.log(osDiv);
-         
-         var data = {"sysCd" : sysCd, "sysCdExt" : sysCdExt, "osDiv" : osDiv}
-         
-         $.ajax({
-            url : "/control/ajaxSelectLogCnt.do",
-            data : data,
-            type : 'POST',
-            dataType : 'json',
-            contentType : "application/x-www-form-urlencoded;charset=UTF-8",
-            success : function(arg) {
-               
-               //나온 결과로 오늘 방문수, 어제방문수, 누적 방문수로 나눠 결과를 html에 넣어준다.
-               $('#todayCnt').html(arg.TodayCnt);
-               $('#yesterdayCnt').html(arg.YesterdayCnt);
-               $('#accumulateCnt').html(arg.AccumulateCnt);
-               containerHighcharts();
-            },
-            error : function() {
+		if(optVal ==""){
+			return;
+		}else {
+			
+			console.log(sysCd);
+			console.log(sysCdExt);
+			console.log(osDiv);
+			
+			var data = {"sysCd" : sysCd, "sysCdExt" : sysCdExt, "osDiv" : osDiv}
+			
+			$.ajax({
+				url : "/control/ajaxSelectLogCnt.do",
+				data : data,
+				type : 'POST',
+				dataType : 'json',
+				contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+				success : function(arg) {
+					
+					//나온 결과로 오늘 방문수, 어제방문수, 누적 방문수로 나눠 결과를 html에 넣어준다.
+					$('#todayCnt').html(arg.TodayCnt);
+					$('#yesterdayCnt').html(arg.YesterdayCnt);
+					$('#accumulateCnt').html(arg.AccumulateCnt);
+					containerHighcharts();
+				},
+				error : function() {
 
-            }
-         });
-         
-      }
-      
-   }
-   
-   function containerHighcharts(){
-      
-      let year = $('#presentYear').val();
-      let month = $('#presentMonth').val();
-      let day = $('#presentDay').val();
-      let option = $("#selectLoginStatisticOption").val();
-      
-      let optVal = $('#selectSite').val();
-      
-      let sysCd = "";
-      let sysCdExt = "";
-      let osDiv = "";
-      
-      let tempArray = optVal.split(":");
-      
-      sysCd = tempArray[0];
-      sysCdExt = tempArray[1];
-      osDiv = tempArray[2];
+				}
+			});
+			
+		}
+		
+	}
+	
+	function containerHighcharts(){
+		
+		let year = $('#presentYear').val();
+		let month = $('#presentMonth').val();
+		let day = $('#presentDay').val();
+		let option = $("#selectLoginStatisticOption").val();
+		
+		let optVal = $('#selectSite').val();
+		
+		let sysCd = "";
+		let sysCdExt = "";
+		let osDiv = "";
+		
+		let tempArray = optVal.split(":");
+		
+		sysCd = tempArray[0];
+		sysCdExt = tempArray[1];
+		osDiv = tempArray[2];
 
-      console.log(sysCd);
-      console.log(sysCdExt);
-      console.log(osDiv);
-      
-      
-      let data = "";
-      console.log(option);
-      
-      if(option=="day"){
-   
-         data = {"sysCd" : sysCd, "sysCdExt" : sysCdExt, "osDiv" : osDiv ,"logYear" : year , "logMonth" : month, "logDt" : day };
-         
-      }else if(option == "month"){
-         
-         data = {"sysCd" : sysCd, "sysCdExt" : sysCdExt, "osDiv" : osDiv, "logYear" : year , "logMonth" : month, "logDt" : "" };
-         
-      }else if(option == "year"){
-         
-         data = {"sysCd" : sysCd, "sysCdExt" : sysCdExt, "osDiv" : osDiv, "logYear" : year , "logMonth" : "", "logDt" : ""};
-      }
-      
-      console.log(data);
-      
-      let siteOption = [];
-      let dayOption =[];
-      let monthOption =[];
-      let yearOption =[];
-      let kaKaoData = [];
-      let naverData = [];
-      let hygeraData = [];
-   
-      
-      //ajax를 통해 데이터를 가져온 후 data를 그래프에 넣어준다.
-      $.ajax({
-            url : "/control/ajaxSelectB2CLoginData.do",
-            data : data,
-            type : 'POST',
-            dataType : 'json',
-            contentType : "application/x-www-form-urlencoded;charset=UTF-8",
-            success : function(arg) {
-   
-               console.log(arg.selectB2cAppLogCnt);
-               //나온 결과로 siteOption을 넣어주고 결과값 데이터를 배열로 넣어준다
-               
-               if (arg.selectB2cAppLogCnt.length > 0) {
-                      for (var i = 0; i < arg.selectB2cAppLogCnt.length; i++) {
-                         dayOption.push(arg.selectB2cAppLogCnt[i]['logDt'] + "일");
-                         monthOption.push(arg.selectB2cAppLogCnt[i]['logMonth'] + "월");
-                         yearOption.push(arg.selectB2cAppLogCnt[i]['logYear'] + "년");
-                         kaKaoData.push( arg.selectB2cAppLogCnt[i]['kakaoLogCnt']);
-                         naverData.push( arg.selectB2cAppLogCnt[i]['naverLogCnt']);
-                         hygeraData.push( arg.selectB2cAppLogCnt[i]['hygeraLogCnt']);
-                     }
-               }
-               
-               if(option=="day"){
-                  
-                  siteOption = dayOption; //일조회
-                  
-                  console.log("siteOption : " + dayOption);
-                  
-               }else if(option == "month"){
-                  
-                  siteOption = monthOption; //월조회 
-                  
-               }else if(option == "year"){
-                  
-                  siteOption = yearOption;
-               }
-               
-               //B2C 소셜 로그인 통계
-               Highcharts.chart('container',{
-                  chart : {
-                     type : 'column'
-                  },
-                  title : {
-                     text : $('#countTitle').html() +' 소셜 로그인 비율'
-                  },
-                  xAxis : {
-                     categories : siteOption //일간/주간/월간
-                  },
-                  yAxis : {
-                     min : 0,
-                     title : {
-                        text : 'Total'
-                     },
-                     stackLabels : {
-                        enabled : true,
-                        style : {
-                           /* fontWeight : 'bold', */
-                           color : ( // theme
-                           Highcharts.defaultOptions.title.style && Highcharts.defaultOptions.title.style.color)
-                                 || '#ffff00'
-                        }
-            
-                     }
-                  },
-                  legend : {
-                     align : 'center',
-                     x : 30,
-                     verticalAlign : 'bottom',
-                     y : 30,
-                     floating : true,
-                     backgroundColor : Highcharts.defaultOptions.legend.backgroundColor
-                           || 'white',
-                      borderColor : '#CCC',
-                     borderWidth : 1, 
-                     shadow : false 
-                  },
-                  tooltip : {
-                     headerFormat : '<b>{point.x}</b><br/>',
-                     pointFormat : '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
-                  },
-                  plotOptions : {
-                     shadow : false,
-                     column : {
-                        stacking : 'normal',
-                        dataLabels : {
-                           enabled : true
-                        }
-                     }
-                  },
-                  series : [ {
-                     name : '하이제라',
-                     data : hygeraData,
-                     color: '#1E3269',
-                  }, {
-                     name : '카카오',
-                     data : kaKaoData,
-                     color: '#FFC31E'
-                  }, {
-                     name : '네이버',
-                     data : naverData, //데이터 값
-                     color: '#0A6E0A'
-                  } ]
+		console.log(sysCd);
+		console.log(sysCdExt);
+		console.log(osDiv);
+		
+		
+		let data = "";
+		console.log(option);
+		
+		if(option=="day"){
+	
+			data = {"sysCd" : sysCd, "sysCdExt" : sysCdExt, "osDiv" : osDiv ,"logYear" : year , "logMonth" : month, "logDt" : day };
+			
+		}else if(option == "month"){
+			
+			data = {"sysCd" : sysCd, "sysCdExt" : sysCdExt, "osDiv" : osDiv, "logYear" : year , "logMonth" : month, "logDt" : "" };
+			
+		}else if(option == "year"){
+			
+			data = {"sysCd" : sysCd, "sysCdExt" : sysCdExt, "osDiv" : osDiv, "logYear" : year , "logMonth" : "", "logDt" : ""};
+		}
+		
+		console.log(data);
+		
+		let siteOption = [];
+		let dayOption =[];
+		let monthOption =[];
+		let yearOption =[];
+		let kaKaoData = [];
+		let naverData = [];
+		let hygeraData = [];
+	
+		
+		//ajax를 통해 데이터를 가져온 후 data를 그래프에 넣어준다.
+		$.ajax({
+				url : "/control/ajaxSelectB2CLoginData.do",
+				data : data,
+				type : 'POST',
+				dataType : 'json',
+				contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+				success : function(arg) {
+	
+					console.log(arg.selectB2cAppLogCnt);
+					//나온 결과로 siteOption을 넣어주고 결과값 데이터를 배열로 넣어준다
+					
+					if (arg.selectB2cAppLogCnt.length > 0) {
+		                for (var i = 0; i < arg.selectB2cAppLogCnt.length; i++) {
+		                	dayOption.push(arg.selectB2cAppLogCnt[i]['logDt'] + "일");
+		                	monthOption.push(arg.selectB2cAppLogCnt[i]['logMonth'] + "월");
+		                	yearOption.push(arg.selectB2cAppLogCnt[i]['logYear'] + "년");
+		                	kaKaoData.push( arg.selectB2cAppLogCnt[i]['kakaoLogCnt']);
+		                	naverData.push( arg.selectB2cAppLogCnt[i]['naverLogCnt']);
+		                	hygeraData.push( arg.selectB2cAppLogCnt[i]['hygeraLogCnt']);
+		            	}
+					}
+					
+					if(option=="day"){
+						
+						siteOption = dayOption; //일조회
+						
+						console.log("siteOption : " + dayOption);
+						
+					}else if(option == "month"){
+						
+						siteOption = monthOption; //월조회 
+						
+					}else if(option == "year"){
+						
+						siteOption = yearOption;
+					}
+					
+					//B2C 소셜 로그인 통계
+					Highcharts.chart('container',{
+						chart : {
+							type : 'column',
+							margin: [0, 10, 65, 10] //css추가
+						},
+						title : {
+							text : $('#countTitle').html() +' 소셜 로그인 비율'
+						},
+						xAxis : {
+							categories : siteOption //일간/주간/월간
+						},
+						yAxis : {
+							min : 0,
+							title : {
+								text : 'Total'
+							},
+							stackLabels : {
+								enabled : true,
+								style : {
+									/* fontWeight : 'bold', */
+									color : ( // theme
+									Highcharts.defaultOptions.title.style && Highcharts.defaultOptions.title.style.color)
+											|| '#ffff00'
+								}
+				
+							}
+						},
+						legend : {
+							align : 'center', //변경
+							overflow : true,
+							x : 0,
+							verticalAlign : 'bottom', //변경
+							y : 15, //변경
+							floating : true,
+							backgroundColor : Highcharts.defaultOptions.legend.backgroundColor
+									|| 'white',
+ 							borderColor : '#CCC',
+							borderWidth : 1, 
+							shadow : false 
+						},
+						tooltip : {
+							headerFormat : '<b>{point.x}</b><br/>',
+							pointFormat : '{series.name}: {point.y}<br/>Total: {point.stackTotal}',
+							backgroundColor : Highcharts.defaultOptions.legend.backgroundColor || 'white' , //변경
+							shadow : false 
+						},
+						plotOptions : {
+							column : {
+								stacking : 'normal',
+								dataLabels : {
+									enabled : true,
+									shadow : false 
+								}
+							}
+						},
+						series : [ {
+							name : '하이제라',
+							data : hygeraData,
+							color: '#1E3269',
+						}, {
+							name : '카카오',
+							data : kaKaoData,
+							color: '#FFC31E'
+						}, {
+							name : '네이버',
+							data : naverData, //데이터 값
+							color: '#0A6E0A'
+						} ]
 
-               });
+					});
 
-               
-            },
-            error : function() {
+					
+				},
+				error : function() {
 
-            }
-         });
-      
+				}
+			});
+		
 
-   
-   }
-   
-   // 브라우저 통계 그래프
-   function webPieHighcharts(){
-      Highcharts.chart('webPie', {
-        chart: {
-          type: 'pie'
-        },
-        title: {
-          text: 'Browser market shares. January, 2022'
-        },
-   
-        accessibility: {
-          announceNewData: {
-            enabled: true
-          },
-          point: {
-            valueSuffix: '%'
-          }
-        },
-   
-        plotOptions: {
-          series: {
-            dataLabels: {
-              enabled: true,
-              format: '{point.name}: {point.y:.1f}%'
-            }
-          }
-        },
-   
-        tooltip: {
-          headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-          pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-        },
-   
-        series: [
-          {
-            name: "Browsers",
-            colorByPoint: true,
-            data: [
-              {
-                name: "Chrome",
-                y: 62.74,
-                drilldown: "Chrome"
-              },
-              {
-                name: "Firefox",
-                y: 10.57,
-                drilldown: "Firefox"
-              },
-              {
-                name: "Internet Explorer",
-                y: 7.23,
-                drilldown: "Internet Explorer"
-              },
-              {
-                name: "Safari",
-                y: 5.58,
-                drilldown: "Safari"
-              },
-              {
-                name: "Edge",
-                y: 4.02,
-                drilldown: "Edge"
-              },
-              {
-                name: "Opera",
-                y: 1.92,
-                drilldown: "Opera"
-              },
-              {
-                name: "Other",
-                y: 7.62,
-                drilldown: null
-              }
-            ]
-          }
-        ],
-        drilldown: {
-          series: [
-            {
-              name: "Chrome",
-              id: "Chrome",
-              data: [
-                [
-                  "v65.0",
-                  0.1
-                ],
-                [
-                  "v64.0",
-                  1.3
-                ],
-                [
-                  "v63.0",
-                  53.02
-                ],
-                [
-                  "v62.0",
-                  1.4
-                ],
-                [
-                  "v61.0",
-                  0.88
-                ],
-                [
-                  "v60.0",
-                  0.56
-                ],
-                [
-                  "v59.0",
-                  0.45
-                ],
-                [
-                  "v58.0",
-                  0.49
-                ],
-                [
-                  "v57.0",
-                  0.32
-                ],
-                [
-                  "v56.0",
-                  0.29
-                ],
-                [
-                  "v55.0",
-                  0.79
-                ],
-                [
-                  "v54.0",
-                  0.18
-                ],
-                [
-                  "v51.0",
-                  0.13
-                ],
-                [
-                  "v49.0",
-                  2.16
-                ],
-                [
-                  "v48.0",
-                  0.13
-                ],
-                [
-                  "v47.0",
-                  0.11
-                ],
-                [
-                  "v43.0",
-                  0.17
-                ],
-                [
-                  "v29.0",
-                  0.26
-                ]
-              ]
-            },
-            {
-              name: "Firefox",
-              id: "Firefox",
-              data: [
-                [
-                  "v58.0",
-                  1.02
-                ],
-                [
-                  "v57.0",
-                  7.36
-                ],
-                [
-                  "v56.0",
-                  0.35
-                ],
-                [
-                  "v55.0",
-                  0.11
-                ],
-                [
-                  "v54.0",
-                  0.1
-                ],
-                [
-                  "v52.0",
-                  0.95
-                ],
-                [
-                  "v51.0",
-                  0.15
-                ],
-                [
-                  "v50.0",
-                  0.1
-                ],
-                [
-                  "v48.0",
-                  0.31
-                ],
-                [
-                  "v47.0",
-                  0.12
-                ]
-              ]
-            },
-            {
-              name: "Internet Explorer",
-              id: "Internet Explorer",
-              data: [
-                [
-                  "v11.0",
-                  6.2
-                ],
-                [
-                  "v10.0",
-                  0.29
-                ],
-                [
-                  "v9.0",
-                  0.27
-                ],
-                [
-                  "v8.0",
-                  0.47
-                ]
-              ]
-            },
-            {
-              name: "Safari",
-              id: "Safari",
-              data: [
-                [
-                  "v11.0",
-                  3.39
-                ],
-                [
-                  "v10.1",
-                  0.96
-                ],
-                [
-                  "v10.0",
-                  0.36
-                ],
-                [
-                  "v9.1",
-                  0.54
-                ],
-                [
-                  "v9.0",
-                  0.13
-                ],
-                [
-                  "v5.1",
-                  0.2
-                ]
-              ]
-            },
-            {
-              name: "Edge",
-              id: "Edge",
-              data: [
-                [
-                  "v16",
-                  2.6
-                ],
-                [
-                  "v15",
-                  0.92
-                ],
-                [
-                  "v14",
-                  0.4
-                ],
-                [
-                  "v13",
-                  0.1
-                ]
-              ]
-            },
-            {
-              name: "Opera",
-              id: "Opera",
-              data: [
-                [
-                  "v50.0",
-                  0.96
-                ],
-                [
-                  "v49.0",
-                  0.82
-                ],
-                [
-                  "v12.1",
-                  0.14
-                ]
-              ]
-            }
-          ]
-        }
-      });
-   }
-   
-   // 모바일 어플 다은로드 통계 그래프
-   function mobilePieHighcharts(){
-      Highcharts.chart('mobilePie', {
-        chart: {
-          type: 'pie'
-        },
-        title: {
-          text: 'APP Download market store shares. 2022'
-        },
-   
-        accessibility: {
-          announceNewData: {
-            enabled: true
-          },
-          point: {
-            valueSuffix: '%'
-          }
-        },
-   
-        plotOptions: {
-          series: {
-            dataLabels: {
-              enabled: true,
-              format: '{point.name}: {point.y:.1f}%'
-            }
-          }
-        },
-   
-        tooltip: {
-          headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
-          pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
-        },
-   
-        series: [
-          {
-            name: "OS",
-            colorByPoint: true,
-            data: [
-              {
-                name: "Android",
-                y: 62.74,
-                drilldown: "Chrome"
-              },
-              {
-                name: "IOS",
-                y: 10.57,
-                drilldown: "Firefox"
-              },
-              {
-                name: "Other",
-                y: 7.62,
-                drilldown: null
-              }
-            ]
-          }
-        ],
-        drilldown: {
-          series: [
-            {
-              name: "Android",
-              id: "Android",
-              data: [
-                [
-                  "v65.0",
-                  0.1
-                ],
-                [
-                  "v64.0",
-                  1.3
-                ],
-                [
-                  "v63.0",
-                  53.02
-                ],
-                [
-                  "v62.0",
-                  1.4
-                ],
-                [
-                  "v61.0",
-                  0.88
-                ],
-                [
-                  "v60.0",
-                  0.56
-                ],
-                [
-                  "v59.0",
-                  0.45
-                ],
-                [
-                  "v58.0",
-                  0.49
-                ],
-                [
-                  "v57.0",
-                  0.32
-                ],
-                [
-                  "v56.0",
-                  0.29
-                ],
-                [
-                  "v55.0",
-                  0.79
-                ],
-                [
-                  "v54.0",
-                  0.18
-                ],
-                [
-                  "v51.0",
-                  0.13
-                ],
-                [
-                  "v49.0",
-                  2.16
-                ],
-                [
-                  "v48.0",
-                  0.13
-                ],
-                [
-                  "v47.0",
-                  0.11
-                ],
-                [
-                  "v43.0",
-                  0.17
-                ],
-                [
-                  "v29.0",
-                  0.26
-                ]
-              ]
-            },
-            {
-              name: "IOS",
-              id: "IOS",
-              data: [
-                [
-                  "v58.0",
-                  1.02
-                ],
-                [
-                  "v57.0",
-                  7.36
-                ],
-                [
-                  "v56.0",
-                  0.35
-                ],
-                [
-                  "v55.0",
-                  0.11
-                ],
-                [
-                  "v54.0",
-                  0.1
-                ],
-                [
-                  "v52.0",
-                  0.95
-                ],
-                [
-                  "v51.0",
-                  0.15
-                ],
-                [
-                  "v50.0",
-                  0.1
-                ],
-                [
-                  "v48.0",
-                  0.31
-                ],
-                [
-                  "v47.0",
-                  0.12
-                ]
-              ]
-            },
-            {
-              name: "Other",
-              id: "Other",
-              data: [
-                [
-                  "v50.0",
-                  0.96
-                ],
-                [
-                  "v49.0",
-                  0.82
-                ],
-                [
-                  "v12.1",
-                  0.14
-                ]
-              ]
-            }
-          ]
-        }
-      });
-   }
-   function weekStatisticHighcharts(){   
-      var title = {
-          text: '주간 로그인 통계 그래프'   
-       };
-       var xAxis = {
-          categories: ['6일전', '5일전', '4일전', '3일전', '2일전', '1일전','오늘']
-       };
-       var yAxis = {
-          title: {
-             text: 'total'
-          }, 
-          plotLines: [{
-             value: 0,
-             width: 1,
-             color: '#808080'
-          }]
-       };   
+	
+	}
+	
+	// 브라우저 통계 그래프
+	function webPieHighcharts(){
+		Highcharts.chart('webPie', {
+		  chart: {
+		    type: 'pie'
+		  },
+		  title: {
+		    text: 'Browser market shares. January, 2022'
+		  },
+	
+		  accessibility: {
+		    announceNewData: {
+		      enabled: true
+		    },
+		    point: {
+		      valueSuffix: '%'
+		    }
+		  },
+	
+		  plotOptions: {
+		    series: {
+		      dataLabels: {
+		        enabled: true,
+		        format: '{point.name}: {point.y:.1f}%'
+		      }
+		    }
+		  },
+	
+		  tooltip: {
+		    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+		    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+		  },
+	
+		  series: [
+		    {
+		      name: "Browsers",
+		      colorByPoint: true,
+		      data: [
+		        {
+		          name: "Chrome",
+		          y: 62.74,
+		          drilldown: "Chrome"
+		        },
+		        {
+		          name: "Firefox",
+		          y: 10.57,
+		          drilldown: "Firefox"
+		        },
+		        {
+		          name: "Internet Explorer",
+		          y: 7.23,
+		          drilldown: "Internet Explorer"
+		        },
+		        {
+		          name: "Safari",
+		          y: 5.58,
+		          drilldown: "Safari"
+		        },
+		        {
+		          name: "Edge",
+		          y: 4.02,
+		          drilldown: "Edge"
+		        },
+		        {
+		          name: "Opera",
+		          y: 1.92,
+		          drilldown: "Opera"
+		        },
+		        {
+		          name: "Other",
+		          y: 7.62,
+		          drilldown: null
+		        }
+		      ]
+		    }
+		  ],
+		  drilldown: {
+		    series: [
+		      {
+		        name: "Chrome",
+		        id: "Chrome",
+		        data: [
+		          [
+		            "v65.0",
+		            0.1
+		          ],
+		          [
+		            "v64.0",
+		            1.3
+		          ],
+		          [
+		            "v63.0",
+		            53.02
+		          ],
+		          [
+		            "v62.0",
+		            1.4
+		          ],
+		          [
+		            "v61.0",
+		            0.88
+		          ],
+		          [
+		            "v60.0",
+		            0.56
+		          ],
+		          [
+		            "v59.0",
+		            0.45
+		          ],
+		          [
+		            "v58.0",
+		            0.49
+		          ],
+		          [
+		            "v57.0",
+		            0.32
+		          ],
+		          [
+		            "v56.0",
+		            0.29
+		          ],
+		          [
+		            "v55.0",
+		            0.79
+		          ],
+		          [
+		            "v54.0",
+		            0.18
+		          ],
+		          [
+		            "v51.0",
+		            0.13
+		          ],
+		          [
+		            "v49.0",
+		            2.16
+		          ],
+		          [
+		            "v48.0",
+		            0.13
+		          ],
+		          [
+		            "v47.0",
+		            0.11
+		          ],
+		          [
+		            "v43.0",
+		            0.17
+		          ],
+		          [
+		            "v29.0",
+		            0.26
+		          ]
+		        ]
+		      },
+		      {
+		        name: "Firefox",
+		        id: "Firefox",
+		        data: [
+		          [
+		            "v58.0",
+		            1.02
+		          ],
+		          [
+		            "v57.0",
+		            7.36
+		          ],
+		          [
+		            "v56.0",
+		            0.35
+		          ],
+		          [
+		            "v55.0",
+		            0.11
+		          ],
+		          [
+		            "v54.0",
+		            0.1
+		          ],
+		          [
+		            "v52.0",
+		            0.95
+		          ],
+		          [
+		            "v51.0",
+		            0.15
+		          ],
+		          [
+		            "v50.0",
+		            0.1
+		          ],
+		          [
+		            "v48.0",
+		            0.31
+		          ],
+		          [
+		            "v47.0",
+		            0.12
+		          ]
+		        ]
+		      },
+		      {
+		        name: "Internet Explorer",
+		        id: "Internet Explorer",
+		        data: [
+		          [
+		            "v11.0",
+		            6.2
+		          ],
+		          [
+		            "v10.0",
+		            0.29
+		          ],
+		          [
+		            "v9.0",
+		            0.27
+		          ],
+		          [
+		            "v8.0",
+		            0.47
+		          ]
+		        ]
+		      },
+		      {
+		        name: "Safari",
+		        id: "Safari",
+		        data: [
+		          [
+		            "v11.0",
+		            3.39
+		          ],
+		          [
+		            "v10.1",
+		            0.96
+		          ],
+		          [
+		            "v10.0",
+		            0.36
+		          ],
+		          [
+		            "v9.1",
+		            0.54
+		          ],
+		          [
+		            "v9.0",
+		            0.13
+		          ],
+		          [
+		            "v5.1",
+		            0.2
+		          ]
+		        ]
+		      },
+		      {
+		        name: "Edge",
+		        id: "Edge",
+		        data: [
+		          [
+		            "v16",
+		            2.6
+		          ],
+		          [
+		            "v15",
+		            0.92
+		          ],
+		          [
+		            "v14",
+		            0.4
+		          ],
+		          [
+		            "v13",
+		            0.1
+		          ]
+		        ]
+		      },
+		      {
+		        name: "Opera",
+		        id: "Opera",
+		        data: [
+		          [
+		            "v50.0",
+		            0.96
+		          ],
+		          [
+		            "v49.0",
+		            0.82
+		          ],
+		          [
+		            "v12.1",
+		            0.14
+		          ]
+		        ]
+		      }
+		    ]
+		  }
+		});
+	}
+	
+	// 모바일 어플 다은로드 통계 그래프
+	function mobilePieHighcharts(){
+		Highcharts.chart('mobilePie', {
+		  chart: {
+		    type: 'pie'
+		  },
+		  title: {
+		    text: 'APP Download market store shares. 2022'
+		  },
+	
+		  accessibility: {
+		    announceNewData: {
+		      enabled: true
+		    },
+		    point: {
+		      valueSuffix: '%'
+		    }
+		  },
+	
+		  plotOptions: {
+		    series: {
+		      dataLabels: {
+		        enabled: true,
+		        format: '{point.name}: {point.y:.1f}%'
+		      }
+		    }
+		  },
+	
+		  tooltip: {
+		    headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+		    pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y:.2f}%</b> of total<br/>'
+		  },
+	
+		  series: [
+		    {
+		      name: "OS",
+		      colorByPoint: true,
+		      data: [
+		        {
+		          name: "Android",
+		          y: 62.74,
+		          drilldown: "Chrome"
+		        },
+		        {
+		          name: "IOS",
+		          y: 10.57,
+		          drilldown: "Firefox"
+		        },
+		        {
+		          name: "Other",
+		          y: 7.62,
+		          drilldown: null
+		        }
+		      ]
+		    }
+		  ],
+		  drilldown: {
+		    series: [
+		      {
+		        name: "Android",
+		        id: "Android",
+		        data: [
+		          [
+		            "v65.0",
+		            0.1
+		          ],
+		          [
+		            "v64.0",
+		            1.3
+		          ],
+		          [
+		            "v63.0",
+		            53.02
+		          ],
+		          [
+		            "v62.0",
+		            1.4
+		          ],
+		          [
+		            "v61.0",
+		            0.88
+		          ],
+		          [
+		            "v60.0",
+		            0.56
+		          ],
+		          [
+		            "v59.0",
+		            0.45
+		          ],
+		          [
+		            "v58.0",
+		            0.49
+		          ],
+		          [
+		            "v57.0",
+		            0.32
+		          ],
+		          [
+		            "v56.0",
+		            0.29
+		          ],
+		          [
+		            "v55.0",
+		            0.79
+		          ],
+		          [
+		            "v54.0",
+		            0.18
+		          ],
+		          [
+		            "v51.0",
+		            0.13
+		          ],
+		          [
+		            "v49.0",
+		            2.16
+		          ],
+		          [
+		            "v48.0",
+		            0.13
+		          ],
+		          [
+		            "v47.0",
+		            0.11
+		          ],
+		          [
+		            "v43.0",
+		            0.17
+		          ],
+		          [
+		            "v29.0",
+		            0.26
+		          ]
+		        ]
+		      },
+		      {
+		        name: "IOS",
+		        id: "IOS",
+		        data: [
+		          [
+		            "v58.0",
+		            1.02
+		          ],
+		          [
+		            "v57.0",
+		            7.36
+		          ],
+		          [
+		            "v56.0",
+		            0.35
+		          ],
+		          [
+		            "v55.0",
+		            0.11
+		          ],
+		          [
+		            "v54.0",
+		            0.1
+		          ],
+		          [
+		            "v52.0",
+		            0.95
+		          ],
+		          [
+		            "v51.0",
+		            0.15
+		          ],
+		          [
+		            "v50.0",
+		            0.1
+		          ],
+		          [
+		            "v48.0",
+		            0.31
+		          ],
+		          [
+		            "v47.0",
+		            0.12
+		          ]
+		        ]
+		      },
+		      {
+		        name: "Other",
+		        id: "Other",
+		        data: [
+		          [
+		            "v50.0",
+		            0.96
+		          ],
+		          [
+		            "v49.0",
+		            0.82
+		          ],
+		          [
+		            "v12.1",
+		            0.14
+		          ]
+		        ]
+		      }
+		    ]
+		  }
+		});
+	}
+	function weekStatisticHighcharts(){	
+		var title = {
+	       text: '주간 로그인 통계 그래프'   
+	    };
+	    var xAxis = {
+	       categories: ['6일전', '5일전', '4일전', '3일전', '2일전', '1일전','오늘']
+	    };
+	    var yAxis = {
+	       title: {
+	          text: 'total'
+	       }, 
+	       plotLines: [{
+	          value: 0,
+	          width: 1,
+	          color: '#808080'
+	       }]
+	    };   
 
-       var legend = {
-          layout: 'vertical',
-          align: 'right',
-          verticalAlign: 'middle',
-          borderWidth: 0
-       };
+	    var legend = {
+	       layout: 'vertical',
+	       align: 'right',
+	       verticalAlign: 'middle',
+	       borderWidth: 0
+	    };
 
-       var series =  [
-          {
-             name: '방문수',
-             data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2]
-          }
-       ];
+	    var series =  [
+	       {
+	          name: '방문수',
+	          data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2]
+	       }
+	    ];
 
-       var json = {};
+	    var json = {};
 
-       json.title = title;
-       json.xAxis = xAxis;
-       json.yAxis = yAxis;
-       json.legend = legend;
-      json.series = series;
+	    json.title = title;
+	    json.xAxis = xAxis;
+	    json.yAxis = yAxis;
+	    json.legend = legend;
+		json.series = series;
 
-      $('#weekStatistic').highcharts(json);
-   }
-   function setSiteAdress(){
-      
-      let siteNm = $('#selectSite').val();
-      if(siteNm =="B:UCLIP:WEB"){
-         $('#siteAdress').html(`udid.hygera.kr`);
-      }else if(siteNm =="B:X3:WEB"){
-         $('#siteAdress').html(`did.hygera.kr`);
-      }else if(siteNm =="B::APP"){
-         $('#siteAdress').html(`Andriod`);
-      }else if(siteNm =="C:UCLIP:WEB"){
-         $('#siteAdress').html(`b2c.hygera.kr`);
-      }else if(siteNm =="C:UCLIP:APP"){
-         $('#siteAdress').html(`Andriod`);
-      }else if(siteNm =="A::"){
-         $('#siteAdress').html(`umgr.hygera.kr`);
-      }
+		$('#weekStatistic').highcharts(json);
+	}
+	function setSiteAdress(){
+		
+		let siteNm = $('#selectSite').val();
+		if(siteNm =="B:UCLIP:WEB"){
+			$('#siteAdress').html(`udid.hygera.kr`);
+		}else if(siteNm =="B:X3:WEB"){
+			$('#siteAdress').html(`did.hygera.kr`);
+		}else if(siteNm =="B::APP"){
+			$('#siteAdress').html(`Andriod`);
+		}else if(siteNm =="C:UCLIP:WEB"){
+			$('#siteAdress').html(`b2c.hygera.kr`);
+		}else if(siteNm =="C:UCLIP:APP"){
+			$('#siteAdress').html(`Andriod`);
+		}else if(siteNm =="A::"){
+			$('#siteAdress').html(`umgr.hygera.kr`);
+		}
 
-   }
-   
-   $(document).on('click', '.highcharts-point', function(e){
-       e.preventDefault();  
-       console.log("클릭");
-       
-       console.log("클릭한 소셜 : " + "클릭한 일자 : " + "총건 : ");
-   })
-   
+	}
+	
+	$(document).on('click', '.highcharts-point', function(e){
+	    e.preventDefault();  
+	    console.log("클릭");
+	    
+	    console.log("클릭한 소셜 : " + "클릭한 일자 : " + "총건 : ");
+	})
+	
 </script>
 
 
 
 <!-- main-content opened -->
 <div class="main-content horizontal-content">
-   <!-- breadcrumbs -->
-   <div class="breadcrumbs">
-      <div class="bg-gray-100 bd-b">
-         <div
-            class="d-flex flex-row align-items-stretch ht-45 container admin-breadcrumbs"
-         >
-            <div class="pd-9 pd-l-0-f flex-grow-1">
-               <a href="javascript:void(0);" class="tx-20">로그인 통계</a>
-            </div>
-            <div class="pd-10 bg-gray-200 d-none d-sm-block">
-               <a href="javascript:void(0);"><i class="typcn typcn-home"></i></a>
-            </div>
-            <div class="pd-12 pd-r-0-f align-items-center d-none d-sm-flex">
-               <a href="javascript:void(0);">관제</a> <i
-                  class="fe fe-chevron-right mx-2"
-               ></i> <a href="javascript:void(0);">로그인 통계</a>
-            </div>
-         </div>
-      </div>
-   </div>
-   <!-- breadcrumbs closed -->
+	<!-- breadcrumbs -->
+	<div class="breadcrumbs">
+		<div class="bg-gray-100 bd-b">
+			<div
+				class="d-flex flex-row align-items-stretch ht-45 container admin-breadcrumbs"
+			>
+				<div class="pd-9 pd-l-0-f flex-grow-1">
+					<a href="javascript:void(0);" class="tx-20">로그인 통계</a>
+				</div>
+				<div class="pd-10 bg-gray-200 d-none d-sm-block">
+					<a href="javascript:void(0);"><i class="typcn typcn-home"></i></a>
+				</div>
+				<div class="pd-12 pd-r-0-f align-items-center d-none d-sm-flex">
+					<a href="javascript:void(0);">관제</a> <i
+						class="fe fe-chevron-right mx-2"
+					></i> <a href="javascript:void(0);">로그인 통계</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- breadcrumbs closed -->
 
-   <!-- container opened -->
-   <div class="container">
-      <div class="mg-t-35">
+	<!-- container opened -->
+	<div class="container">
+		<div class="mg-t-35">
 
-         <div class="d-flex justify-content-between align-items-end mg-b-10">
-            <h4 class="mb-0 tx-bold tx-20">로그인 현황</h4>
-            <label class="form-label-tx mr-2 d-none">시설</label>
-            <div style="line-height: 1.2;" class="tx-primary">
-            <input type="hidden" id ="siteNm" value="" />
-               <select class="form-select" id="selectSite" name="selectSite" onChange="siteChange();">
-                  <option value="B:UCLIP:WEB">B2B WEB u-Clip</option>
-                  <option value="B:X3:WEB">B2B WEB X-3</option>
-                  <option value="B::APP">B2B APP</option>
-                  <option value="C:UCLIP:WEB">B2C WEB</option>
-                  <option value="C:UCLIP:APP" selected>B2C APP</option>
-                  <option value="A::">MGR WEB</option>
-               </select>
-            </div>
-         </div>
-         <div class="border rounded">
-            <div class="p-3">
-               <div class="d-lg-flex d-block">
-                  <h2 class="mb-0 tx-bold tx-20 align-items-center" id="siteAdress"></h4>
-                  <h4 class="mb-0 tx-bold tx-20 mr-5 ml-auto">오늘 방문수 </h4>
-                  <h4 class="mb-0 tx-bold tx-20 mr-5">어제 방문수 </h4>
-                  <h4 class="mb-0 tx-bold tx-20">누적 방문수</h4>
-               </div>
-               <div class="d-lg-flex d-block">
-                  <h4 class="mb-0 tx-bold tx-50 mr-5" id="countTitle">
-                  </h4>
-                  <h4 class="mb-0 tx-bold tx-50 mr-5 ml-auto">
-                     <span id="todayCnt" >0</span>
-                  </h4>
-                  <h4 class="mb-0 tx-bold tx-50 mr-5">
-                     <span id="yesterdayCnt">0</span>
-                  </h4>
-                  <h4 class="mb-0 tx-bold tx-50">
-                     <span id="accumulateCnt">0</span>
-                  </h4>
-               </div>
-            </div>
-         </div>
-      </div>
+			<div class="d-flex justify-content-between align-items-end mg-b-10">
+				<h4 class="mb-0 tx-bold tx-20">로그인 현황</h4>
+				<label class="form-label-tx mr-2 d-none">시설</label>
+				<div style="line-height: 1.2;" class="tx-primary">
+				<input type="hidden" id ="siteNm" value="" />
+					<select class="form-select" id="selectSite" name="selectSite" onChange="siteChange();">
+						<option value="B:UCLIP:WEB">B2B WEB u-Clip</option>
+						<option value="B:X3:WEB">B2B WEB X-3</option>
+						<option value="B::APP">B2B APP</option>
+						<option value="C:UCLIP:WEB">B2C WEB</option>
+						<option value="C:UCLIP:APP" selected>B2C APP</option>
+						<option value="A::">MGR WEB</option>
+					</select>
+				</div>
+			</div>
+			<div class="border rounded">
+				<div class="p-3">
+					<div class="d-lg-flex d-block">
+						<h2 class="mb-0 tx-bold tx-20 align-items-center" id="siteAdress"></h4>
+						<h4 class="mb-0 tx-bold tx-20 mr-5 ml-auto">오늘 방문수 </h4>
+						<h4 class="mb-0 tx-bold tx-20 mr-5">어제 방문수 </h4>
+						<h4 class="mb-0 tx-bold tx-20">누적 방문수</h4>
+					</div>
+					<div class="d-lg-flex d-block">
+						<h4 class="mb-0 tx-bold tx-50 mr-5" id="countTitle">
+						</h4>
+						<h4 class="mb-0 tx-bold tx-50 mr-5 ml-auto">
+							<span id="todayCnt" >0</span>
+						</h4>
+						<h4 class="mb-0 tx-bold tx-50 mr-5">
+							<span id="yesterdayCnt">0</span>
+						</h4>
+						<h4 class="mb-0 tx-bold tx-50">
+							<span id="accumulateCnt">0</span>
+						</h4>
+					</div>
+				</div>
+			</div>
+		</div>
 
-      <div class="mg-t-35">
-         <div class="d-flex justify-content-between align-items-end mg-b-10">
-            <h4 class="mb-0 tx-bold tx-20">
-               <span id="todayData"></span>
-               <input type="hidden" id ="presentDay" value="" />
-                <input type="hidden" id ="presentMonth" value="" />
-                <input type="hidden" id ="presentYear" value="" />
-            </h4>
-            <div style="line-height: 1.2;" class="tx-primary">
-               <select class="form-select" id="selectLoginStatisticOption" name="selectLoginStatisticOption" onChange="containerHighcharts();">
-                  <option value="day" selected>일간</option>
-                  <option value="month">월간</option>
-                  <option value="year">년간</option>
-               </select>
-            </div>
-         </div>
-         <div class="border rounded">
-            <div class="p-3">
-               <figure class="highcharts-figure">
-                  <div id="container"></div>
-               </figure>
-            </div>
-         </div>
-         <div class="d-lg-flex align-items-start d-block">
-            <figure class="highcharts-figure">
-              <div id="weekStatistic"></div>
-                <p class="highcharts-description" align="right" id="weekTodayDate">
-               </p>
-            </figure>
-            <figure class="highcharts-figure">
-              <div id="webPie"></div>
-              <div id="mobilePie"></div>
-            </figure>
-         </div>
-      </div>
-   </div>
+		<div class="mg-t-35">
+			<div class="d-flex justify-content-between align-items-end mg-b-10">
+				<h4 class="mb-0 tx-bold tx-20">
+					<span id="todayData"></span>
+					<input type="hidden" id ="presentDay" value="" />
+				    <input type="hidden" id ="presentMonth" value="" />
+				    <input type="hidden" id ="presentYear" value="" />
+				</h4>
+				<div style="line-height: 1.2;" class="tx-primary">
+					<select class="form-select" id="selectLoginStatisticOption" name="selectLoginStatisticOption" onChange="containerHighcharts();">
+						<option value="day" selected>일간</option>
+						<option value="month">월간</option>
+						<option value="year">년간</option>
+					</select>
+				</div>
+			</div>
+			<div class="border rounded">
+				<div class="p-3">
+					<figure class="highcharts-figure">
+						<div id="container"></div>
+					</figure>
+				</div>
+			</div>
+			<div class="d-lg-flex align-items-start d-block">
+				<figure class="highcharts-figure">
+				  <div id="weekStatistic"></div>
+				    <p class="highcharts-description" align="right" id="weekTodayDate">
+					</p>
+				</figure>
+				<figure class="highcharts-figure">
+				  <div id="webPie"></div>
+				  <div id="mobilePie"></div>
+				</figure>
+			</div>
+		</div>
+	</div>
 </div>
