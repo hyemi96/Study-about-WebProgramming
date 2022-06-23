@@ -1,0 +1,6 @@
+[추가 교육 자료 - 7/4 업데이트 ] 
+1. 파이썬 기초:  www.boostcourse.org/cs114
+2. Git 사용법:  https://ebbnflow.tistory.com/196
+
+
+https://github.com/joneconsulting/seocho_blockchain
