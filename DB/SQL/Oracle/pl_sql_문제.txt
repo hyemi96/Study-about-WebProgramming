@@ -1,0 +1,172 @@
+--1. members 테이블에서 영업부, 제주,여자 인원수 변수에 담아 출력
+declare
+vdid varchar2(10);
+vaddr members.addr%type ;
+vgender members.gender%type ;
+vcount number;
+
+begin
+  select did,addr,gender,count(*)
+  into vdid,vaddr, vgender,vcount
+from members
+where did='영업부' and addr='제주' and gender='여자'
+group by did,addr,gender;
+dbms_output.put_line(vdid||','||vaddr||','|| vgender||','||vcount);
+
+end;
+
+출력 : 영업부,제주,여자,2
+
+--------------------------------------------------------------------------------------------------------
+
+-- 2. 생일이 90년대인 사람들 출력
+declare
+
+begin
+  for i in (select * from members where birth>='90-1-1' and birth<='99-12-31') loop
+    dbms_output.put_line(i.no ||','|| i.name ||','|| i.birth);
+  end loop;
+  
+end;
+
+1,제시카,90/12/25
+2,수영,90/12/25
+7,유리,92/07/20
+9,써니,99/04/12
+11,조이,90/01/01
+
+--------------------------------------------------------------------------------------------------------
+3. 
+select * from book;
+--no를 입력받고, no에 해당하는 레코드의 
+--출간일이 80년대이면 가격 20%할인 수정 (1000->800)
+--출간일이 90년대이면 가격 10%할인 수정 (1000->900)
+--그 밖의 경우이면 5%할인 수정 (1000->950)
+-- 3번 입력 : '82/01/24' 3000=>2400
+
+declare
+  vinput number := '&no';
+  vday book.day%type;
+  vprice book.price%type; 
+  vimsi number;
+begin
+  select day,price
+  into vday, vprice
+  from book
+  where no = vinput;
+  
+--  dbms_output.put_line(vday || ','|| vprice);
+  if vday >= '80-1-1' and vday<='89-12-31' then
+    vimsi := vprice * 0.8;
+  elsif vday >= '90-1-1' and vday<='99-12-31' then
+    vimsi := vprice * 0.9;
+  else
+    vimsi := vprice * 0.95;
+  end if;
+--  if
+  update book set price = vimsi where no = vinput;  
+end;
+
+select * from book;
+
+--------------------------------------------------------------------------------------------------------
+--4. book 테이블에서 번호 하나를 넘겨서 그 번호의 출판사가 
+--문학동네이면 가격+100
+--창작과 비평이면 가격+200
+--문학과 지성이면 가격+300 으로 수정하는 procedure만들기 
+
+
+
+create or replace procedure update_price(vno number)
+as
+-- 변수 선언
+vpublisher varchar2(20);
+begin
+  select publisher
+  into vpublisher
+  from book
+  where no = vno;
+  
+  if vpublisher='문학동네' then
+    update book set price = price + 100 where no = vno;
+  elsif  vpublisher='창작과 비평' then
+    update book set price = price + 200 where no = vno;
+  elsif  vpublisher='문학과 지성' then
+    update book set price = price + 300 where no = vno;  
+  end if;  
+end;
+
+execute update_price(3);
+select * from book;
+
+--------------------------------------------------------------------------------------------------------
+-- 5. 반복문 사용해서 * 출력하기 
+
+declare
+
+begin
+  for i in 1..5 loop
+    for j in 1..i loop
+     dbms_output.put('*');
+    end loop;
+    dbms_output.put_line('');
+  end loop;  
+end;
+
+
+
+*
+**
+***
+****
+*****
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+-- 6. members 테이블에서 생일이 가장 오래된 값을 가져오는 함수 만들기
+
+create or replace function old_birth
+return date as
+--변수 선언
+vmin date;
+begin
+  select min(birth) 
+  into vmin
+  from members;
+  
+  return vmin;
+end;
+
+select old_birth from dual;
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

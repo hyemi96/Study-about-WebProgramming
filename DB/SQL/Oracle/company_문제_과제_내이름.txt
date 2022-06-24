@@ -1,0 +1,592 @@
+
+
+table이름 : company
+
+sequence이름 : com_seq(1부터 시작해서 1씩 증가, 10000까지 증가)
+
+drop table company;
+create table company(
+	sabun number primary key, -- not null, unique
+	name varchar2(12),
+	day date,
+	position varchar2(10),
+	pay number
+);
+
+drop sequence com_seq;
+create sequence com_seq
+	increment by 1
+	start with 1
+	minvalue 1
+	maxvalue 10000;
+
+
+insert into company(sabun,name,day,position,pay)
+values(com_seq.nextval,'보아','2000-3-12','대리',1000);
+
+insert into company(sabun, name, day, position, pay)
+values(com_seq.nextval,'민아','2010-8-3','부장',9000);
+
+insert into company(sabun, name, day, position, pay)
+values(com_seq.nextval,'찬열','1993-2-22','과장',3000);
+
+insert into company(sabun, name, day,  position, pay)
+values(com_seq.nextval,'휘성','2014-12-20','대리',4000);
+
+insert into company(sabun, name, day, position, pay)
+values(com_seq.nextval,'현아','1998-3-4','부장',8000);
+
+insert into company(sabun, name, day,position, pay)
+values(com_seq.nextval,'조권','2006-4-7','과장',2000);
+
+commit;
+
+select * from company;
+
+    SABUN NAME       DAY      POSITION                    PAY
+--------- ---------- -------- -------------------- ----------
+        1 보아       00/03/12 대리                       1000
+        2 민아       10/08/03 부장                       9000
+        3 찬열       93/02/22 과장                       3000
+        4 휘성       14/12/20 대리                       4000
+        5 현아       98/03/04 부장                       8000
+        6 조권       06/04/07 과장                       2000
+
+
+1. gender 추가하고 남, 여 넣기
+
+SQL> alter table company add(gender char(3) default '남' check (gender in('남','여'))); 
+SQL> update company set gender='남'
+  2  where sabun in(3,4,6);
+SQL> update company set gender='여'
+  2  where sabun=1 or sabun=2 or sabun=5;
+
+
+
+
+2. 급여가 3000~5000 사이인 레코드 출력
+SQL> select * from company
+  2  where pay>=3000 and pay<=5000;   
+
+SABUN NAME       DAY      POSITION          PAY GENDER
+----- ---------- -------- ---------- ---------- ------
+    3 찬열       93/02/22 과장             3000 남
+    4 휘성       14/12/20 대리             4000 남
+
+또는
+
+SQL> select * from company
+  2  where pay between 3000 and 5000;
+
+
+
+
+
+
+3. 이름에 '아' 들어간 사람 출력
+SQL> select * from company
+  2  where name like '_아';
+
+     SABUN NAME     IBSAIL   GENDER POSITI        PAY
+---------- -------- -------- ------ ------ ----------
+         1 보아     00/03/12 여     대리         1000
+         3 민아     10/08/03 여     부장         9000
+         5 현아     98/03/04 여     부장         8000
+
+SQL> select * from company
+  2  where name like '%아';
+
+
+이름에 '아' 포함 안된 사람
+
+SQL> select * from company
+  2  where name not like '%아';
+
+     SABUN NAME         DAY      POSITION                    PAY GENDER
+---------- ------------ -------- -------------------- ---------- ------
+         3 찬열         93/02/22 과장                       3000 남
+         4 휘성         14/12/20 대리                       4000 남
+         6 조권         06/04/07 과장                       2000 남
+
+
+
+4. 성별이 '남'인 사람만 출력
+SQL> select * from company
+  2  where gender='남';
+
+SQL> select * from company
+  2  where gender like '남%';
+
+
+     SABUN NAME     IBSAIL   GENDER POSITI        PAY
+---------- -------- -------- ------ ------ ----------
+         2 찬열     93/02/22 남     과장         3000
+         4 휘성     14/12/20 남     대리         4000
+         6 조권     06/04/07 남     과장         2000
+
+
+5. 입사일이 오래된 사람부터 정렬하여 출력
+SQL> select * from company
+  2  order by day asc;
+또는
+SQL> select * from company
+  2  order by day ;
+
+
+
+     SABUN NAME     DAY   GENDER POSITI        PAY
+---------- -------- -------- ------ ------ ----------
+         2 찬열     93/02/22 남     과장         3000
+         5 현아     98/03/04 여     부장         8000
+         1 보아     00/03/12 여     대리         1000
+         6 조권     06/04/07 남     과장         2000
+         3 민아     10/08/03 여     부장         9000
+         4 휘성     14/12/20 남     대리         4000
+
+
+
+6. 성별이 여자이면서 급여가 5000이상인 사람의 
+   sabun, name, gender, pay 칼럼 출력
+
+SQL> select sabun,name,gender,pay
+  2  from company
+  3  where gender='여' and pay>=5000;
+
+SABUN NAME       GENDER        PAY
+----- ---------- ------ ----------
+    2 민아       여           9000
+    5 현아       여           8000
+
+
+7. 보아의 입사일은 2000-3-12일 입니다. 의 형식으로 성별이 여자인 데이터 출력하기
+
+SQL> select name ||'의 입사일은' || day || '일 입니다.'
+  2  from company
+  3  where gender='여';
+ 
+
+
+NAME||'의 입사일은'||DAY||'일입니다.'
+----------------------------------------------
+
+보아의 입사일은 00/03/12일 입니다.
+민아의 입사일은 10/08/03일 입니다.
+현아의 입사일은 98/03/04일 입니다.
+
+
+
+
+8. 직급별로 가나다 순 출력하고, 같은 직급일 때에는 입사일이 오래된 사람부터 출력
+SQL> select * from company
+  2  order by position asc, day asc;
+ 
+ 
+SQL> select * from company
+  2  order by position , day ;
+
+
+
+     SABUN NAME         DAY      POSITION           PAY GENDER
+---------- ------- -------- ------------ -------- ---
+         3 찬열         93/02/22 과장                       3000 남
+         6 조권         06/04/07 과장                       2000 남
+         1 보아         00/03/12 대리                       1000 여
+         4 휘성         14/12/20 대리                       4000 남
+         5 현아         98/03/04 부장                       8000 여
+         2 민아         10/08/03 부장                       9000 여
+
+
+
+9. 입사일이 90년대인 사람 조회
+
+SQL> select * from company
+  2  where day>='90-1-1' and day<='99-12-31';
+
+SQL> select * from company
+  2  where day between '90/1/1' and '99-12-31';
+
+
+     SABUN NAME         DAY      POSITION                    PAY GENDER
+---------- ------------ -------- -------------------- ---------- ------
+         3 찬열         93/02/22 과장                       3000 남
+         5 현아         98/03/04 부장                       8000 여
+
+
+
+
+
+10. 과장과 대리 조회(2가지 방법)
+SQL> select * from company
+  2  where position='대리' or position='과장';
+
+SQL> select * from company
+  2  where position in('대리','과장');
+
+
+     
+
+     SABUN NAME         DAY      POSITION          PAY GENDER
+---------- ------------ -------- --------------- -------- ------
+         1 보아         00/03/12 대리                       1000 여
+         3 찬열         93/02/22 과장                       3000 남
+         4 휘성         14/12/20 대리                       4000 남
+         6 조권         06/04/07 과장                       2000 남
+
+
+
+
+11. 보아의 연봉은 12000원입니다. 의 형식으로 출력
+
+SQL> select name || '의 연봉은' || pay*12 || '원 입니다'
+  2  from company;
+
+NAME||'의연봉은'||PAY*12||'원입니다.'
+-----------------------------------------
+
+보아의 연봉은 12000원 입니다.
+민아의 연봉은 108000원 입니다.
+찬열의 연봉은 36000원 입니다.
+휘성의 연봉은 48000원 입니다.
+현아의 연봉은 96000원 입니다.
+조권의 연봉은 24000원 입니다.
+
+
+12. 현아를 현미로 변경
+SQL> update company set name='현미'
+  2  where name='현아';
+
+commit;
+
+13. 이름에 '아' 포함된 여자 
+
+SQL> select * from company
+  2  where name like '%아%' and gender='여';
+
+SABUN NAME       DAY      POSITION          PAY GENDER
+----- ---------- -------- ---------- ---------- ------
+    1 보아       00/03/12 대리             1000 여
+    2 민아       10/08/03 부장             9000 여
+
+
+
+14. pay칼럼을 salary로 변경
+SQL> alter table company rename column pay to salary;
+
+
+15. hobby(취미) 칼럼 추가
+SQL> alter table company add(hobby varchar2(10));
+
+
+
+16. 여자이면서 대리인 데이터 삭제하고 다시 rollback
+SQL> delete from company
+  2  where gender='여' and position='대리';
+
+rollback;
+
+
+17. 과장 급여 평균
+SQL> 
+select position, avg(salary), count(*) 
+from company
+where position='과장'
+group by position;
+
+POSITION             AVG(SALARY)
+-------------------- -----------
+과장                        2500
+
+
+position 별 salary 평균, 인원수 조회
+
+select position, avg(salary), count(*) 
+from company
+group by position;
+
+POSITION   AVG(SALARY)   COUNT(*)
+---------- ----------- ----------
+과장              2500          2
+대리              2500          2
+부장              8500          2
+
+
+18. 대리 인원수 조회
+SQL> select count(*) as 인원수
+  2  from company
+  3  where position='대리';
+ 
+ 
+SQL> select count(*) as 인원수
+  2  from company
+  3  where position='대리'
+  4  group by position;
+
+
+    인원수
+----------
+         2
+
+
+
+19. 직급별 인원수 출력(직급, 인원수 모두 출력)
+SQL> select position,  count(*) 
+from company
+group by position;
+
+
+POSITION               COUNT(*)
+-------------------- ----------
+과장                          2
+대리                          2
+부장                          2
+
+
+
+20. 남자의 급여 평균을 출력하기
+SQL> select avg(salary)
+  2  from company
+  3  where gender='남';
+
+
+SQL> select avg(salary)
+  2  from company
+  3  where gender='남'
+  4  group by gender;
+
+
+AVG(SALARY)
+-----------
+       3000
+
+
+
+
+21. 직급별 인원수 구해서 직급별로 내림차순 정렬하여 출력하기
+SQL> select position,  count(*) 
+from company
+group by position
+order by position desc;
+
+POSITION               COUNT(*)
+-------------------- ----------
+부장                          2
+대리                          2
+과장                          2
+
+
+22. 성별별 인원수 구하기
+SQL> select gender, count(*)
+  2  from company
+  3  group by gender;
+
+
+GENDER   COUNT(*)
+------ ----------
+여              3
+남              3
+
+
+23. 전체 레코드의 성별 출력해보고 하나씩만 출력하기
+
+SQL> select gender from company;
+
+SQL> select distinct gender from company;
+
+GENDER
+------
+여
+남
+
+SQL> select gender from company
+  2  group by gender;
+ 
+GENDER
+------
+여
+남
+
+
+
+24. 입사일 day를 ibsail로 변경하기
+SQL> alter table company rename column day to ibsail;
+
+
+
+
+25. 연봉 칼럼(annual_salary) 추가하고 salary*12값 넣어서 출력하기
+SQL> alter table company add(annual_salary number);
+SQL> update company set annual_salary = salary*12;
+
+
+
+26. pay 평균이 3000이상인 직급과 평균 출력
+전체 직급별 평균 조회
+SQL> select position,avg(salary)
+  2  from company
+  3  group by position; 
+
+POSITION             AVG(SALARY)
+-------------------- -----------
+과장                        2500
+대리                        2500
+부장                        8500
+
+
+pay 평균이 3000이상을 대상으로 조회
+SQL> select position,avg(salary)
+    from company
+    group by position
+    having avg(salary) >= 3000;
+
+POSITION             AVG(SALARY)
+-------------------- -----------
+부장                        8500
+
+
+남자이면서 대리인 레코드 갯수 조회
+SQL> select position, gender,count(*) 인원수
+  2  from company
+  3  where gender='남' and position='대리'
+  4  group by position,gender;
+
+
+select position, gender,count(*) 인원수
+from company
+group by position,gender
+having gender='남' and position='대리';
+
+
+
+POSITI GENDER     인원수
+------ ------ ----------
+대리   남              1
+
+
+27. pay를 내림 차순정렬 했을 때 2~4등 사이의 레코드 조회
+
+
+
+     RANK NAME         POSITION                 SALARY
+--------- ------------ -------------------- ----------
+        2 현미         부장                       8000
+        3 휘성         대리                       4000
+        4 찬열         과장                       3000
+
+SQL> select rownum,name,position,salary
+    from company
+    order by salary desc;
+
+    ROWNUM NAME       POSITI     SALARY
+---------- ---------- ------ ----------
+         2 민아       부장         9000
+         5 현미       부장         8000
+         4 휘성       대리         4000
+         3 찬열       과장         3000
+         6 조권       과장         2000
+         1 보아       대리         1000
+
+
+select rownum as rank ,name,position,salary
+from (select rownum,name,position,salary
+    from company
+    order by salary desc);
+
+
+SQL> select rownum as rank ,name,position,salary
+    from (select rownum,name,position,salary
+        from company
+        order by salary desc);
+
+      RANK NAME       POSITI     SALARY
+---------- ---------- ------ ----------
+         1 민아       부장         9000
+         2 현미       부장         8000
+         3 휘성       대리         4000
+         4 찬열       과장         3000
+         5 조권       과장         2000
+         6 보아       대리         1000
+
+
+
+SQL> select rank ,name,position,salary
+  2  from(select rownum as rank ,name,position,salary
+  3      from (select rownum,name,position,salary
+  4          from company
+  5          order by salary desc))
+  6  where rank between 2 and 4;
+
+      RANK NAME       POSITI     SALARY
+---------- ---------- ------ ----------
+         2 현미       부장         8000
+         3 휘성       대리         4000
+         4 찬열       과장         3000
+
+dense_rank는 하나씩 추가되는거고 rank는 중복값 뛰어넘고
+select name,position,salary,rank() over(order by salary desc) as rank
+from company;
+
+
+select name,position,salary,dense_rank() over(order by salary desc) as rank
+from company;
+
+NAME       POSITI     SALARY       RANK
+---------- ------ ---------- ----------
+민아       부장         9000          1
+현미       부장         8000          2
+휘성       대리         4000          3
+찬열       과장         3000          4
+조권       과장         2000          5
+보아       대리         1000          6
+
+
+select name,position,salary,RANK
+from(select name,position,salary,dense_rank() over(order by salary desc) as rank
+from company)
+where rank between 2 and 4;
+
+NAME       POSITI     SALARY       RANK
+---------- ------ ---------- ----------
+현미       부장         8000          2
+휘성       대리         4000          3
+찬열       과장         3000          4
+
+
+
+
+
+
+
+28.
+drop table library cascade constraints;
+create table library(
+	no number primary key, -- 부모키
+	title varchar2(10),
+	author varchar2(10)
+);
+
+insert into library values(1,'java','김java');
+insert into library values(2,'oracle','박oracle');
+insert into library values(3,'jsp','최jsp');
+
+drop table borrow cascade constraints;
+create table borrow(
+	book_no number references library(no) on delete set null, -- 외래키
+	person_no number,
+	book_title varchar2(10),
+	person_name varchar2(10)
+);
+
+insert into borrow values(1,101,'java','태연');
+insert into borrow values(2,102,'oracle','아이유');
+insert into borrow values(4,103,'spring','윤아');
+
+
+
+
+
+
+
+
+
+
+

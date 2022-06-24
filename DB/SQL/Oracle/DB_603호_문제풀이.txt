@@ -1,0 +1,489 @@
+
+drop table book;
+
+create table book(
+ no number primary key,
+ title varchar2(30) not null,
+ author varchar2(20) not null,
+ publisher varchar2(20),
+ day date default sysdate
+);
+
+insert into book(no,title,author,publisher,day)
+values(1,'백설공주','수지','문학동네','90-1-2');
+
+insert into book values(2,'어린왕자','태연','창작과 비평',to_date('93/11/2'));
+
+insert into book values(3,'신데렐라','하니','문학동네',to_date('82/1/24'));
+
+insert into book values(4,'콩쥐팥쥐','보라','문학과 지성',to_date('99/5/2'));
+
+insert into book(no,title,author,publisher,day) 
+values(5,'선녀와 나무꾼','아이유','창작과 비평','16/03/04');
+
+insert into book(no,title,author,publisher,day) 
+values(6,'흥부와 놀부','민아','문학동네','16/03/04');
+
+commit;
+
+SQL> select * from book;
+
+        NO TITLE            AUTHOR     PUBLISHER            DAY
+---------- ---------------- ---------- -------------------- --------
+         1 백설공주         수지       문학동네             90/01/02
+         2 어린왕자         태연       창작과 비평          93/11/02
+         3 신데렐라         하니       문학동네             82/01/24
+         4 콩쥐팥쥐         보라       문학과 지성          99/05/02
+         5 선녀와 나무꾼    아이유     창작과 비평          16/03/04
+         6 흥부와 놀부      민아       문학동네             16/03/04
+
+
+
+1. price 칼럼 추가(기본값 0)
+SQL> alter table book add(price number default 0);
+
+
+2. no칼럼이 1,3,5인 곳에 price 1000넣기
+SQL> update book set price=1000 where no=1 or no=3 or no=5;
+SQL> update book set price=1000 where no in(1,3,5);
+
+
+3. no칼럼이 2,4인 곳에  price 2000넣기
+SQL> update book set price=2000 where no in(2,4);
+
+4. no칼럼이 6인 곳에  price 3000넣기
+SQL> update book set price=3000 where no=6;
+
+위 1~4작업 후 commit;
+
+
+
+5. title이 신데렐라인 레코드의 title=인어공주로,  price=3000으로 수정후 commit
+SQL> update book set title='인어공주', price=3000
+  2  where title='신데렐라';
+
+
+6. author에 '아' 포함된 사람 조회
+SQL> select * from book
+  2  where author like '%아%';
+
+  NO TITLE            AUTHOR     PUBLISHER    DAY           PRICE
+---- ---------------- ---------- ------------ -------- ----------
+   5 선녀와 나무꾼    아이유     창작과 비평  16/03/04       1000
+   6 흥부와 놀부      민아       문학동네     16/03/04       3000
+
+
+7. 아래와 같이 price 20%할인된 금액으로 할인 금액이 나오게 하기
+
+SQL> select title,price,price*0.8 as "할인 금액" from book;
+
+TITLE                 PRICE  할인 금액
+---------------- ---------- ----------
+백설공주               1000        800
+어린왕자               2000       1600
+인어공주               3000       2400
+콩쥐팥쥐               2000       1600
+선녀와 나무꾼          1000        800
+흥부와 놀부            3000       2400
+
+
+
+8. 발행일 최신순으로 정렬
+SQL> select * from book
+  2  order by day desc;
+
+  NO TITLE            AUTHOR     PUBLISHER    DAY           PRICE
+---- ---------------- ---------- ------------ -------- ----------
+   6 흥부와 놀부      민아       문학동네     15/06/16       3000
+   5 선녀와 나무꾼    아이유     창작과 비평  15/06/16       1000
+   4 콩쥐팥쥐         보라       문학과 지성  99/05/02       2000
+   2 어린왕자         태연       창작과 비평  93/11/02       2000
+   1 백설공주         수지       문학동네     90/01/02       1000
+   3 인어공주         하니       문학동네     82/01/24       3000
+
+
+9. 높은 가격이 먼저 나오고
+같은 가격이 있으면 제목을 가나다 순으로 정렬
+오름차순 : 가나다, abc, 1234
+
+SQL> select * from book
+  2  order by price desc, title asc;
+
+
+  NO TITLE            AUTHOR     PUBLISHER    DAY           PRICE
+---- ---------------- ---------- ------------ -------- ----------
+   3 인어공주         하니       문학동네     82/01/24       3000
+   6 흥부와 놀부      민아       문학동네     15/06/16       3000
+   2 어린왕자         태연       창작과 비평  93/11/02       2000
+   4 콩쥐팥쥐         보라       문학과 지성  99/05/02       2000
+   1 백설공주         수지       문학동네     90/01/02       1000
+   5 선녀와 나무꾼    아이유     창작과 비평  15/06/16       1000
+
+
+
+
+10. 출판사가 문학동네인 레코드 삭제후 rollback;
+SQL> delete from book
+  2  where publisher='문학동네';
+
+
+
+11. 가격이 1000이 아닌 레코드 조회
+SQL> select * from book
+  2  where price <> 1000;
+
+  NO TITLE            AUTHOR     PUBLISHER    DAY           PRICE
+---- ---------------- ---------- ------------ -------- ----------
+   2 어린왕자         태연       창작과 비평  93/11/02       2000
+   4 콩쥐팥쥐         보라       문학과 지성  99/05/02       2000
+   6 흥부와 놀부      민아       문학동네     16/03/04       3000
+
+
+12. 출판사 중복 안되게 한번씩만 조회
+
+SQL> select distinct(publisher) from book;
+
+PUBLISHER
+------------
+문학동네
+문학과 지성
+창작과 비평
+
+
+13. 출판일이 90년대인 레코드 조회
+SQL> select * from book
+  2  where day>='90-1-1' and day<='99-12-31';
+
+SQL> select * from book
+  2  where day between '90-1-1' and '99-12-31';
+
+
+  NO TITLE            AUTHOR     PUBLISHER    DAY           PRICE
+---- ---------------- ---------- ------------ -------- ----------
+   1 백설공주         수지       문학동네     90/01/02       1000
+   2 어린왕자         태연       창작과 비평  93/11/02       2000
+   4 콩쥐팥쥐         보라       문학과 지성  99/05/02       2000
+
+
+
+
+14. 모든 레코드를 아래의 형식으로 조회하기
+
+SQL> select title || '의 저자는' || author || '입니다.'
+  2  from book;
+
+
+백설공주의 저자는 수지입니다.
+어린왕자의 저자는 태연입니다.
+신데렐라의 저자는 하니입니다.
+콩쥐팥쥐의 저자는 보라입니다.
+선녀와 나무꾼의 저자는 아이유입니다.
+흥부와 놀부의 저자는 민아입니다.
+
+
+
+15. 칼럼명 author를 name으로 변경
+SQL> alter table book rename column author to name;
+
+
+=====================================================
+
+16. title에 '공주'포함된 레코드 수 세기
+
+SQL> select count(*) 갯수
+  2  from book
+  3  where title like '%공주%';
+
+      갯수
+----------
+         1
+
+
+17. 출판사 별로 레코드수, 최고가격 조회하기
+
+SQL> SELECT PUBLISHER, COUNT(*) AS 출판사수, MAX(PRICE) AS 최고가격 
+FROM book 
+GROUP BY PUBLISHER;
+
+
+PUBLISHER         출판사수   최고가격
+--------------- ---------- ----------
+문학동네                 3       3000
+문학과 지성              1       2000
+창작과 비평              2       2000
+
+
+
+18. 전체 가격 평균을 구하고,
+출판사별로 가격 평균을 구하고,
+출판사별로 가격 평균이 전체 평균보다 높은 출판사와 그 출판사의 가격평균을 조회하기
+90년대에 출판된 도서중에서 를 조건으로 추가해보기(아래 추가했음)
+
+SQL> select avg(price) from book;
+
+AVG(PRICE)
+----------
+1666.66667
+
+
+
+SQL> select publisher,avg(price)
+  2  from book
+  3  group by publisher;
+
+PUBLISHER    AVG(PRICE)
+------------ ----------
+문학동네     1666.66667
+문학과 지성        2000
+창작과 비평        1500
+
+
+
+SQL> select publisher, avg(price) from book
+    group by publisher
+    having avg(price) > (select avg(price) from book);
+
+
+PUBLISHER    AVG(PRICE)
+------------ ----------
+문학과 지성        2000
+
+
+
+추가된것
+90년대 출판된 도서를 대상으로 출판사별 가격 평균
+SQL> select publisher,avg(price) 가격평균
+ from book
+where day between '90-01-01' and '99-12-31'
+ group by publisher;
+
+
+PUBLISHER       AVG(PRICE)
+--------------- ----------
+문학동네              1000
+문학과 지성           2000
+창작과 비평           2000
+
+
+
+90년대에 출판된 도서중에서
+출판사별로 가격 평균이 전체 평균보다 높은 출판사와 
+그 출판사의 가격평균을 조회하기
+
+SQL> select publisher, avg(price) 
+from book 
+where day between '90-1-1' and '99-12-31' 
+group by publisher
+having avg(price) > (select avg(price) from book);
+
+
+PUBLISHER       AVG(PRICE)
+--------------- ----------
+문학과 지성           2000
+창작과 비평           2000
+
+
+19. 출판일이 오래된 날짜 조회
+SQL> select min(day) as "날짜"
+from book;
+
+
+날짜
+--------
+82/01/24
+
+
+20.
+alter table book add(sell_no number);
+update book set sell_no=100 where no in(1,3);
+update book set sell_no=200 where no in(2,6);
+update book set sell_no=300 where no in(4,5);
+commit;
+
+
+seller(판매처)
+
+create table seller(
+sell_no number primary key,
+place varchar2(20) not null
+);
+
+insert into seller values(100,'교보');
+insert into seller values(200,'영풍');
+insert into seller values(300,'yes24');
+
+commit;
+
+SQL> select * from seller;
+
+   SELL_NO PLACE
+---------- --------------------
+       100 교보
+       200 영풍
+       300 yes24
+
+
+SQL> col sell_no for 999
+SQL> col price for 99999
+SQL> select * from book;
+
+ NO TITLE           NAME       PUBLISHER       DAY       PRICE SELL_NO
+--- --------------- ---------- --------------- -------- ------ -------
+  1 백설공주        수지       문학동네        90/01/02   1000     100
+  2 어린왕자        태연       창작과 비평     93/11/02   2000     200
+  3 인어공주        하니       문학동네        82/01/24   3000     100
+  4 콩쥐팥쥐        보라       문학과 지성     99/05/02   2000     300
+  5 선녀와 나무꾼   아이유     창작과 비평     16/03/04   1000     300
+  6 흥부와 놀부     민아       문학동네        16/03/04   3000     200
+
+
+
+SQL> select no,title,publisher,bk.sell_no, place
+    from book bk full outer join seller sl
+   on bk.sell_no = sl.sell_no;
+
+
+SQL> select no,title,publisher,sell_no, place
+    from book  natural join seller;
+   
+
+또는
+
+SQL>  select no,title,publisher,bk.sell_no, place
+    from book bk inner join seller sl
+   on bk.sell_no = sl.sell_no;
+
+
+  SQL> select no,title,publisher,bk.sell_no, place
+  2  from book bk, seller sl
+  3  where bk.sell_no = sl.sell_no;
+
+ NO TITLE            PUBLISHER          SELL_NO PLACE
+--- ---------------- --------------- ---------- ------
+  1 백설공주         문학동네               100 교보
+  2 어린왕자         창작과 비평            200 영풍
+  3 신데렐라         문학동네               100 교보
+  4 콩쥐팥쥐         문학과 지성            300 yes24
+  5 선녀와 나무꾼    창작과 비평            300 yes24
+  6 흥부와 놀부      문학동네               200 영풍
+
+=========================================================================
+
+CUSTOMER_NO 추가
+
+SQL> alter table book add(customer_no number);
+
+테이블이 변경되었습니다.
+
+SQL> update book set customer_no=1
+   where no in(1,3);
+
+update book set customer_no=2
+   where no in(2,6);
+
+update book set customer_no=3
+   where no in(4,5);
+
+commit;
+
+SQL> select * from book;
+
+ NO TITLE           NAME       PUBLISHER       DAY       PRICE CUSTOMER_NO
+--- --------------- ---------- --------------- -------- ------ -----------
+  1 백설공주        수지       문학동네        90/01/02   1000           1
+  2 어린왕자        태연       창작과 비평     93/11/02   2000           2
+  3 인어공주        하니       문학동네        82/01/24   3000           1
+  4 콩쥐팥쥐        보라       문학과 지성     99/05/02   2000           3
+  5 선녀와 나무꾼   아이유     창작과 비평     18/10/22   1000           3
+  6 흥부와 놀부     민아       문학동네        18/10/22   3000           2
+
+
+
+sequence name : cus_seq
+
+drop sequence cus_seq;
+create sequence cus_seq
+	increment by 1
+	start with 1
+	minvalue 1;
+
+drop table customer;
+create table customer(
+	no number primary key,
+	name varchar2(10),
+	addr varchar2(10)
+);
+
+insert into customer 
+values(cus_seq.nextval,'찬성','대구');
+
+insert into customer
+values(cus_seq.nextval,'백현','강릉');
+insert into customer
+values(cus_seq.nextval,'택연','울산');
+insert into customer
+values(cus_seq.nextval,'수호','목포');
+commit;
+
+
+select * from customer;
+
+        NO NAME       ADDR
+---------- ---------- -------------
+         1 찬성       대구
+         2 백현       강릉
+         3 택연       울산
+         4 수호       목포
+
+SQL> select * from book;
+
+ NO TITLE           NAME       PUBLISHER       DAY       PRICE CUSTOMER_NO
+--- --------------- ---------- --------------- -------- ------ -----------
+  1 백설공주        수지       문학동네        90/01/02   1000           1
+  2 어린왕자        태연       창작과 비평     93/11/02   2000           2
+  3 인어공주        하니       문학동네        82/01/24   3000           1
+  4 콩쥐팥쥐        보라       문학과 지성     99/05/02   2000           3
+  5 선녀와 나무꾼   아이유     창작과 비평     18/10/22   1000           3
+  6 흥부와 놀부     민아       문학동네        18/10/22   3000           2
+
+
+SQL> select bk.no, bk.title, bk.name,customer_no,ct.name,ct.addr
+    from book bk, customer ct
+    where bk.customer_no = ct.no;
+
+
+   select bk.no, bk.title, bk.name,customer_no,ct.name,ct.addr
+    from book bk inner join customer ct
+    on bk.customer_no = ct.no;
+
+
+ select no, title, name,customer_no,name,addr
+    from book bk natural join customer ct;
+선택된 레코드가 없습니다.
+
+
+ NO TITLE           NAME       CUSTOMER_NO NAME       ADDR
+--- --------------- ---------- ----------- ---------- ---------------
+  1 백설공주        수지                 1 찬성       대구
+  2 어린왕자        태연                 2 백현       강릉
+  3 인어공주        하니                 1 찬성       대구
+  4 콩쥐팥쥐        보라                 3 택연       울산
+  5 선녀와 나무꾼   아이유               3 택연       울산
+  6 흥부와 놀부     민아                 2 백현       강릉
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

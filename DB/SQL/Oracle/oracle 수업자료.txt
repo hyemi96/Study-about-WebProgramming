@@ -1,0 +1,2216 @@
+sys
+oracle as sysdba
+
+SQL> show user;
+USER은 "SYS"입니다
+
+관리자 계정에서 
+SQL> alter session set "_oracle_script"=true;
+
+세션이 변경되었습니다.
+
+
+SQL> show user;
+USER은 "SYS"입니다
+
+
+
+create user 새로운id identified by 새로운pw account unlock;
+SQL> create user jspid identified by jsppw account unlock;
+사용자가 생성되었습니다.
+
+SQL> alter user jspid default tablespace users quota 
+unlimited on users;
+
+사용자가 변경되었습니다.
+
+
+SQL> drop user jspid cascade;
+
+SQL> create user jspid identified by jsppw account unlock;
+사용자가 생성되었습니다.
+
+
+SQL> grant connect, resource to jspid;
+
+권한이 부여되었습니다.
+
+SQL> grant create table, create sequence to jspid;
+
+권한이 부여되었습니다.
+
+
+
+SQL> conn
+사용자명 입력: jspid
+비밀번호 입력:
+연결되었습니다.
+SQL> show user;
+USER은 "JSPID"입니다
+
+대소문자 구분 안함
+
+drop table members;
+create table members(
+id number primary key, -- 반드시 입력(unique + not null)
+name varchar2(50) not null, -- 반드시 입력
+salary number(15, 2) default 1000000,
+birth date default sysdate, -- 오늘날짜
+email varchar2(50),
+);
+
+
+SQL> select * from members;
+
+선택된 레코드가 없습니다.
+
+형식 : 
+select 칼럼1, 칼럼2,.. from 테이블명;
+select * from 테이블명;
+
+형식 : 
+insert into 테이블명(칼럼명1,칼럼명2,..)
+values(값1,값2,...);
+
+
+insert into members(id,name,salary,birth,email)
+values(1, '제시카' , 100, '90/12/25', 'abc@naver.com');
+
+
+
+SQL> col name for a10
+SQL> col email for a15
+SQL> col id for a3 -- #으로 보인다. 
+SQL> col id for 999
+
+insert into members(id,name,salary,birth,email)
+values(2,'티파니',700,'85-1-2','bbb@daum.net');
+
+
+insert into members(id,name,salary,birth,email)
+values(3,'수영',300,'75-11-2','abb@daum.net');
+
+insert into members(id,name,salary,birth,email)
+values(4,'효연',800,'99-1-2','xyz@daum.net');
+
+insert into members(id,name,salary,birth,email)
+values(5,'서현',200,'95-8-21','qqq@naver.com');
+
+insert into members(id,name,salary,birth,email)
+values(6,'제시카',600,'85-12-2','ccc@daum.net');
+
+
+insert 한 순서대로 select 했을 때 보이지 않는다.
+
+
+primary key로 설정한 칼럼에 똑같은 데이터 넣으려고 할 때
+ORA-00001: 무결성 제약 조건(JSPID.SYS_C007357)에 위배됩니다
+
+
+
+insert into members(salary,birth,id,name)
+values(200,'85-12-2',7,'유리');
+
+insert into members(salary,birth,id,name)
+values(300,'85-12-2',8,'유리');
+
+
+insert into members(id,name)
+values(9,'써니');
+
+-- 칼럼명을 안쓰면.. 
+insert into members
+values(10,'수지',500,to_date('99-2-2'),'ddd@naver.com');
+
+
+
+id,name 칼럼만 조회
+SQL> select id,name from members;
+
+
+id가 5이하인 레코드 조회
+SQL> select * from members where id<=5;
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   1 제시카            100 90/12/25 abc@naver.com
+   2 티파니            700 85/01/02 bbb@daum.net
+   3 수영              300 75/11/02 abb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+   5 서현              200 95/08/21 qqq@naver.com
+
+
+
+급여가 500이상인 레코드 조회
+SQL> select * from members
+  2  where salary>=500;
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   2 티파니            700 85/01/02 bbb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+   6 제시카            600 85/12/02 ccc@daum.net
+   9 써니          1000000 20/12/09
+  10 수지              500 99/02/02 ddd@naver.com
+
+
+id가 5이하 이면서 급여가 500이상인 레코드 조회
+SQL> select * from members
+  2  where id<=5 and salary>=500;
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   2 티파니            700 85/01/02 bbb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+
+
+
+id가 5이하 이거나 급여가 500이상인 레코드 조회
+SQL> select * from members
+  2  where id<=5 or salary>=500;
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   1 제시카            100 90/12/25 abc@naver.com
+   2 티파니            700 85/01/02 bbb@daum.net
+   3 수영              300 75/11/02 abb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+   5 서현              200 95/08/21 qqq@naver.com
+   6 제시카            600 85/12/02 ccc@daum.net
+   9 써니          1000000 20/12/09
+  10 수지              500 99/02/02 ddd@naver.com
+
+
+
+salary가 500~1000 사이인 레코드 조회
+
+SQL> select * from members
+  2  where salary>=500 and salary<=1000;
+
+SQL> select * from members
+  2  where salary between 500 and 1000;
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   2 티파니            700 85/01/02 bbb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+   6 제시카            600 85/12/02 ccc@daum.net
+  10 수지              500 99/02/02 ddd@naver.com
+
+
+
+id가 3~7인 레코드 조회
+SQL> select * from members
+  2  where id>=3 and id<=7;
+
+SQL> select * from members
+  2  where id between 3 and 7;
+
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   3 수영              300 75/11/02 abb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+   5 서현              200 95/08/21 qqq@naver.com
+   6 제시카            600 85/12/02 ccc@daum.net
+   7 유리              200 85/12/02
+
+
+birth가 90년대 생인 레코드 조회
+SQL> select * from members
+  2  where birth>='90-1-1' and birth<='99/12-31';
+
+SQL> select * from members
+  2  where birth between '90-1-1' and '99-12/31';
+
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   1 제시카            100 90/12/25 abc@naver.com
+   4 효연              800 99/01/02 xyz@daum.net
+   5 서현              200 95/08/21 qqq@naver.com
+  10 수지              500 99/02/02 ddd@naver.com
+
+
+
+
+
+id가 3~7이 아닌 레코드 조회
+SQL> select * from members
+  2  where id<3 or id>7;
+
+SQL> select * from members
+  2  where not(id>=3 and id<=7);
+
+SQL> select * from members
+  2  where not id between 3 and 7;
+
+SQL> select * from members
+  2  where id not  between 3 and 7;
+
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   1 제시카            100 90/12/25 abc@naver.com
+   2 티파니            700 85/01/02 bbb@daum.net
+   8 유리              300 85/12/02
+   9 써니          1000000 20/12/09
+  10 수지              500 99/02/02 ddd@naver.com
+
+
+
+id가 1이거나 3이거나 8인 레코드 조회
+
+SQL> select * from members
+  2  where id=1 or id=3 or id=8;
+
+SQL> select * from members
+  2  where id in(1,3,8);
+
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   1 제시카            100 90/12/25 abc@naver.com
+   3 수영              300 75/11/02 abb@daum.net
+   8 유리              300 85/12/02
+
+
+이름이 제시카, 수영인 레코드 조회
+SQL> select * from members
+  2  where name='제시카' or name='수영';
+
+SQL> select * from members
+     where name in('제시카','수영');
+
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   1 제시카            100 90/12/25 abc@naver.com
+   3 수영              300 75/11/02 abb@daum.net
+   6 제시카            600 85/12/02 ccc@daum.net
+
+
+email에 데이터 없는 레코드 조회
+
+SQL> select * from members
+  2  where email = '';
+
+선택된 레코드가 없습니다.
+
+
+SQL> select * from members
+  2  where email = null;
+
+선택된 레코드가 없습니다.
+
+
+SQL> select * from members
+  2  where email is null;
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   7 유리              200 85/12/02
+   8 유리              300 85/12/02
+   9 써니          1000000 20/12/09
+
+
+
+email이 null 이 아닌 레코드 조회
+SQL> select * from members
+  2  where email is not null;
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   1 제시카            100 90/12/25 abc@naver.com
+   2 티파니            700 85/01/02 bbb@daum.net
+   3 수영              300 75/11/02 abb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+   5 서현              200 95/08/21 qqq@naver.com
+   6 제시카            600 85/12/02 ccc@daum.net
+  10 수지              500 99/02/02 ddd@naver.com
+
+
+80년대생중에 salary가 500~700인 레코드 조회
+select * from members
+where (birth between '80-1-1' and '89-12-31') and (salary between 500 and 700);
+
+ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   2 티파니            700 85/01/02 bbb@daum.net
+   6 제시카            600 85/12/02 ccc@daum.net
+
+
+
+
+11번 레코드 추가
+11,아이유,3000,71-2-3,abc@daum.net
+insert into members
+values(11 , '아이유' , 3000, to_date('71-2-3') , 'abc@daum.net' );
+
+
+
+
+
+% : 0글자~여러글자
+_(밑줄) : 한글자
+
+
+유%: 유,유리,유재석, 김유(X)
+%유: 유, 김유, 김선유 
+%유%: 유,유리,유재석,김유, 김선유,김유선,남궁유리
+
+유_:유리(O), 유재석(X), 김유(X)
+_유:김유, 김선유(X)
+
+김_:김철
+김__:김선유,김유선, 김유(X)
+
+
+이름에 '유' 포함된 레코드 조회
+SQL> select * from members
+  2  where name like '%유%';
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+  11 아이유           3000 71/02/03 abc@daum.net
+   7 유리              200 85/12/02
+   8 유리              300 85/12/02
+
+
+'니'로 끝나는 레코드 조회
+SQL> select * from members
+  2  where name like '%니';
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   2 티파니            700 85/01/02 bbb@daum.net
+   9 써니          1000000 20/12/09
+
+
+이름에 '유' 포함 안된 레코드 조회
+SQL> select * from members
+  2  where name not like '%유%';
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   1 제시카            100 90/12/25 abc@naver.com
+   2 티파니            700 85/01/02 bbb@daum.net
+   3 수영              300 75/11/02 abb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+   5 서현              200 95/08/21 qqq@naver.com
+   6 제시카            600 85/12/02 ccc@daum.net
+   9 써니          1000000 20/12/09
+  10 수지              500 99/02/02 ddd@naver.com
+
+
+
+EMAIL이 daum인 레코드 조회
+select * from members
+where email like '%daum%';
+
+ ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+  11 아이유           3000 71/02/03 abc@daum.net
+   2 티파니            700 85/01/02 bbb@daum.net
+   3 수영              300 75/11/02 abb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+   6 제시카            600 85/12/02 ccc@daum.net
+
+
+name이 아이유가 아닌 레코드 조회
+SQL> select * from members
+  2  where name <> '아이유';
+
+
+
+정렬
+형식 : order by 칼럼명 방식
+
+SQL> select * from members
+  2  order by id asc; 
+asc(default) : 오름차순 (ABCD,1234,가나다라)
+desc : 내림차순
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   1 제시카            100 90/12/25 abc@naver.com
+   2 티파니            700 85/01/02 bbb@daum.net
+   3 수영              300 75/11/02 abb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+   5 서현              200 95/08/21 qqq@naver.com
+   6 제시카            600 85/12/02 ccc@daum.net
+   7 유리              200 85/12/02
+   8 유리              300 85/12/02
+   9 써니          1000000 20/12/09
+  10 수지              500 99/02/02 ddd@naver.com
+  11 아이유           3000 71/02/03 abc@daum.net
+
+11 행이 선택되었습니다.
+
+
+salary기준 내림차순 정렬하고, 같은 salary가 있을 때 id기준 오름차순 정렬
+SQL> select * from members
+  2  order by salary desc, id asc;
+
+ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   9 써니          1000000 20/12/09
+  11 아이유           3000 71/02/03 abc@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+   2 티파니            700 85/01/02 bbb@daum.net
+   6 제시카            600 85/12/02 ccc@daum.net
+  10 수지              500 99/02/02 ddd@naver.com
+   3 수영              300 75/11/02 abb@daum.net
+   8 유리              300 85/12/02
+   5 서현              200 95/08/21 qqq@naver.com
+   7 유리              200 85/12/02
+   1 제시카            100 90/12/25 abc@naver.com
+
+
+
+name기준 오름차순 정렬하고, 같은 이름이 있으면 생일 빠른 사람이 먼저 나오도록 정렬
+SQL> select * from members
+  2  order by name , birth ;
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   5 서현              200 95/08/21 qqq@naver.com
+   3 수영              300 75/11/02 abb@daum.net
+  10 수지              500 99/02/02 ddd@naver.com
+   9 써니          1000000 20/12/09
+  11 아이유           3000 71/02/03 abc@daum.net
+   7 유리              200 85/12/02
+   8 유리              300 85/12/02
+   6 제시카            600 85/12/02 ccc@daum.net
+   1 제시카            100 90/12/25 abc@naver.com
+   2 티파니            700 85/01/02 bbb@daum.net
+   4 효연              800 99/01/02 xyz@daum.net
+
+
+
+
+SQL> desc members;
+이름                                      널?      유형
+ ----------------------------------------- -------- ----------------------------
+ ID                                        NOT NULL NUMBER
+ NAME                                      NOT NULL VARCHAR2(50)
+ SALARY                                             NUMBER(15,2)
+ BIRTH                                              DATE
+ EMAIL                                              VARCHAR2(50)
+
+
+
+email이 null인 레코드를 salary가 높은 것부터 나오도록 정렬해서 조회
+SQL> select * from members
+  2  where email is null
+  3  order by salary desc;
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   9 써니          1000000 20/12/09
+   8 유리              300 85/12/02
+   7 유리              200 85/12/02
+
+
+
+80년대생 이름 가나다 순으로 정렬
+SQL> select * from members
+  2  where birth>='80-1-1' and birth<='89-12-31'
+  3  order by name asc, salary desc;
+
+SQL> select * from members
+    where  birth between '80-1-1' and '89-12-31'
+   order by name asc, salary desc;
+
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+   8 유리              300 85/12/02
+   7 유리              200 85/12/02
+   6 제시카            600 85/12/02 ccc@daum.net
+   2 티파니            700 85/01/02 bbb@daum.net
+
+
+name 기준 오름차순 정렬
+SQL> select * from members
+  2  order by name asc;
+
+SQL> select * from members
+  2  order by 2 asc;
+
+
+select 칼럼명 [as] 별칭 from 테이블명; -- [as]는 생략 가능 
+
+SQL> select id as 번호 from members;
+
+      번호
+----------
+         1
+         2
+         3
+         4
+         5
+         6
+         7
+         8
+         9
+        10
+        11
+
+11 행이 선택되었습니다.
+
+
+
+SQL> select name, salary , salary * 12 as 연봉 from members;
+
+NAME           SALARY       연봉
+---------- ---------- ----------
+아이유           3000      36000
+제시카            100       1200
+티파니            700       8400
+수영              300       3600
+효연              800       9600
+서현              200       2400
+제시카            600       7200
+유리              200       2400
+유리              300       3600
+써니          1000000   12000000
+수지              500       6000
+
+11 행이 선택되었습니다.
+
+
+-- 별칭 공백 ""
+SQL> select name, salary , salary * 12  "2020년 연봉" from members;
+
+NAME           SALARY 2020년 연봉
+---------- ---------- -----------
+아이유           3000       36000
+제시카            100        1200
+티파니            700        8400
+수영              300        3600
+효연              800        9600
+서현              200        2400
+제시카            600        7200
+유리              200        2400
+유리              300        3600
+써니          1000000    12000000
+수지              500        6000
+
+11 행이 선택되었습니다.
+
+
+|| : 연결
+SQL> select name || '의 급여는' || salary || '원 입니다.'
+  2  from members;
+
+NAME||'의급여는'||SALARY||'원입니다.'
+--------------------------------------------------------------------------------
+아이유의 급여는3000원 입니다.
+제시카의 급여는100원 입니다.
+티파니의 급여는700원 입니다.
+수영의 급여는300원 입니다.
+효연의 급여는800원 입니다.
+서현의 급여는200원 입니다.
+제시카의 급여는600원 입니다.
+유리의 급여는200원 입니다.
+유리의 급여는300원 입니다.
+써니의 급여는1000000원 입니다.
+수지의 급여는500원 입니다.
+
+s.o.p(name+"의 급여는"+salary+"원입니다.");
+
+
+90년 생만 조건
+SQL> select name || '의 생일은 ' || birth || '입니다.'
+  2  from members
+  3  where birth between '90-1-1' and '99/12/31';
+
+NAME||'의생일은'||BIRTH||'입니다.'
+--------------------------------------------------------------------------------
+제시카의 생일은 90/12/25입니다.
+효연의 생일은 99/01/02입니다.
+서현의 생일은 95/08/21입니다.
+수지의 생일은 99/02/02입니다.
+
+
+SQL> select name || '의 생일은 ' || birth || '입니다.'
+        from members
+        where birth between '90-1-1' and '99/12/31'
+        order by name asc;
+
+
+NAME||'의생일은'||BIRTH||'입니다.'
+--------------------------------------------------------------------------------
+서현의 생일은 95/08/21입니다.
+수지의 생일은 99/02/02입니다.
+제시카의 생일은 90/12/25입니다.
+효연의 생일은 99/01/02입니다.
+
+
+
+
+[형식]
+update 테이블이름 
+set 컬럼1=값1, 컬럼2=값2, ...
+where 조건식 ;
+
+SQL> update members set salary=500;
+
+11 행이 업데이트되었습니다.
+
+SQL> select * from members;
+
+  ID NAME           SALARY BIRTH    EMAIL
+---- ---------- ---------- -------- ---------------
+  11 아이유            500 71/02/03 abc@daum.net
+   1 제시카            500 90/12/25 abc@naver.com
+   2 티파니            500 85/01/02 bbb@daum.net
+   3 수영              500 75/11/02 abb@daum.net
+   4 효연              500 99/01/02 xyz@daum.net
+   5 서현              500 95/08/21 qqq@naver.com
+   6 제시카            500 85/12/02 ccc@daum.net
+   7 유리              500 85/12/02
+   8 유리              500 85/12/02
+   9 써니              500 20/12/09
+  10 수지              500 99/02/02 ddd@naver.com
+
+11 행이 선택되었습니다.
+
+
+SQL> rollback; -- 마지막 commit 상태로 되돌릴 때 사용한다.
+
+
+id가 5보다 큰 레코드의 salary를 500으로 수정
+SQL> update members set salary=500
+  2  where id>5;
+
+
+id가 7인 레코드의 salary=400, birth=77-12-9 수정
+SQL> update members
+  2  set salary=400, birth=to_date('77-12-9')
+  3  where id=7;
+
+
+
+id가 5이상인 레코드의 급여를 50원씩 인상으로 수정
+update members set salary  = salary + 50
+where id>=5;
+
+
+email이 null인 자리에 qwer@naver.com 넣기
+SQL> update members
+  2  set email='qwer@naver.com'
+  3  where email is null;
+
+
+
+daum email쓰는 사람 salary 5원 인상
+update members set salary=salary+5
+where email like '%daum%';
+
+
+
+
+[형식]
+delete [from] 테이블이름
+where 조건식 ;
+
+
+
+id가 8보다 큰 레코드 삭제
+SQL> delete from members
+  2  where id>8;
+
+
+
+
+칼럼 이름 수정
+형식 : 
+alter table 테이블이름 rename column 이전컬럼명 to 새컬럼명 ;
+
+id칼럼명을 no로 변경
+SQL> alter table members rename column id to no;
+rollback 안된다. 
+
+
+칼럼 유형 수정
+형식 : 
+alter table 테이블이름 modify(수정될컬럼 바꿀내용) ;
+
+name 칼럼 varchar2(50) => varchar2(30)으로 변경
+SQL> alter table members modify(name varchar2(30));
+
+
+칼럼 추가
+형식:
+alter table 테이블이름 add(컬럼명 타입);
+
+gender 칼럼 추가
+SQL> alter table members add(gender varchar2(6));
+
+
+
+
+칼럼 삭제
+형식:
+alter table 테이블이름 drop column 삭제될컬럼 ;
+
+gender 칼럼 삭제
+SQL> alter table members drop column gender;
+
+
+
+
+address 칼럼 추가 varchar2(10)
+alter table members add(address varchar2(10));
+desc members;
+
+
+address 칼럼 varchar2(20) 변경
+alter table members modify(address varchar2(20));
+desc members;
+
+
+address 칼럼 => juso 변경
+alter table members rename column address to juso;
+desc members;
+
+
+juso 칼럼 삭제
+alter table members drop column juso;
+desc members;
+
+
+
+
+
+gender 칼럼 추가
+SQL> alter table members add(gender varchar2(6)  default '남자' check(gender in('남자','여자') ));
+check 제약 조건 설정
+
+
+alter table members add( kor number check(kor between 50 and 80) );
+
+SQL> update members
+  2  set kor=30
+  3  where no=1;
+update members
+*
+1행에 오류:
+ORA-02290: 체크 제약조건(JSPID.SYS_C007359)이 위배되었습니다
+
+SQL> update members
+  2  set kor=60
+  3  where no=1;
+
+1 행이 업데이트되었습니다.
+
+
+
+gender 칼럼 삭제
+alter table members drop column gender;
+
+update members 
+set gender='여자'
+where no=1;
+
+ORA-12899: "JSPID"."MEMBERS"."GENDER" 열에 대한 값이 너무 큼(실제: 7, 최대값:6)
+
+
+추가
+insert 
+add
+
+수정
+update
+rename column
+modify
+
+삭제
+delete
+drop column 
+
+
+테이블 이름 변경
+형식:
+rename 이전테이블명 to 새테이블명;
+SQL> rename members to hahaha;
+
+rollback 안됨
+
+
+
+모든 salary 합계구하기
+SQL> select sum(salary) as "급여 총합계" from members;
+
+급여 총합계
+-----------
+    1007075
+
+
+
+SQL> select avg(salary) as "급여 평균" from members;
+
+ 급여 평균
+----------
+91552.2727
+
+
+가장 큰 salary
+SQL> select max(salary) from members;
+
+MAX(SALARY)
+-----------
+    1000050
+
+
+가장 작은 salary
+SQL> select min(salary) as "작은 salary" from members;
+
+작은 salary
+-----------
+        100
+
+
+no가 1,3,5인 email에 null 넣기
+SQL> update members set email= null
+  2  where no in(1,3,5);
+
+
+SQL> select count(name) from members;
+
+COUNT(NAME)
+-----------
+         11
+
+
+SQL> select count(email) from members;
+8개인 이유 : 
+
+COUNT(EMAIL)
+------------
+           8
+
+
+
+SQL> select count(*) from members;
+* : 
+
+  COUNT(*)
+----------
+        11
+
+
+
+gender 칼럼 추가
+SQL> alter table members add(gender varchar2(6) default '여자');
+
+no = 1,3,4 남자
+나머지는 여자
+SQL> update members set gender='남자'
+  2  where no in(1,3,4);
+
+
+SQL> select count(gender) from members;
+
+COUNT(GENDER)
+-------------
+           11
+
+
+남자 레코드 수
+SQL> select count(gender) 남자인원수 from members where gender='남자';
+
+남자인원수
+----------
+         3
+
+여자 레코드 수
+SQL> select count(*) as 여자인원수 from members where gender='여자';
+
+여자인원수
+----------
+         8
+
+
+이름에 '유' 포함된 레코드 수 조회
+select count(*) from members
+where name like '%유%';
+
+
+이름에 '유' 포함된 레코드의 급여 평균 조회
+SQL> select avg(salary) from members
+  2  where name like '%유%';
+
+AVG(SALARY)
+-----------
+ 1218.33333
+
+
+
+남자 급여 평균
+
+select avg(salary) from members where gender='남자';
+AVG(SALARY)
+-----------
+ 403.333333
+
+
+여자 중 최고 급여
+select max(salary) from members
+where gender = '여자'; -- 
+MAX(SALARY)
+-----------
+    1000050
+
+
+member 테이블에 did(부서) 칼럼 추가
+alter table members add(did varchar2(9) default'개발부');
+
+
+no= 2,5,8 영업부
+update members set did = '영업부' where no in(2,5,8);
+
+
+no= 3,4,9 홍보부
+update members set did = '홍보부' where no in(3,4,9);
+나머지 개발부
+
+
+
+SQL> alter table members drop column kor;
+
+
+
+
+
+남자 급여 평균
+
+select avg(salary) from members where gender='남자';
+AVG(SALARY)
+-----------
+ 403.333333
+
+
+gender별로 salary 평균 구하기
+SQL> select avg(salary) from members
+  2  group by gender;
+
+AVG(SALARY)
+-----------
+ 125733.125
+ 403.333333
+
+
+부서별(did)로 salary 평균
+SQL> select did,avg(salary)
+  2  from members
+  3  group by did;
+
+DID    AVG(SALARY)
+------ -----------
+개발부         922
+영업부         435
+홍보부      333720
+
+
+SQL> select gender,avg(salary)
+  2  from members
+  3  group by gender;
+
+GEND AVG(SALARY)
+---- -----------
+여자  125733.125
+남자  403.333333
+
+
+
+부서별(did)로 salary 평균,부서별 최고 급여,인원수
+SQL> select did, avg(salary), max(salary) as "최고 급여",count(*) 인원수
+  2  from members
+  3  group by did;
+
+DID    AVG(SALARY)  최고 급여     인원수
+------ ----------- ---------- ----------
+개발부         922       3055          5
+영업부         435        705          3
+홍보부      333720    1000050          3
+
+
+
+부서별(did)로 salary 평균,부서별 최고 급여,인원수를 부서명 내림차순 조회
+
+ SQL> select did, avg(salary), max(salary) as "최고 급여",count(*) 인원수
+  2   from members
+  3   group by did
+  4   order by did desc;
+
+DID    AVG(SALARY)  최고 급여     인원수
+------ ----------- ---------- ----------
+홍보부      333720    1000050          3
+영업부         435        705          3
+개발부         922       3055          5
+
+
+
+did 한번씩만 출력
+SQL> select distinct did from members;
+SQL> select did from members
+  2  group by did;
+
+DID
+------
+개발부
+영업부
+홍보부
+
+
+addr 칼럼 추가
+SQL> alter table members add(addr varchar2(10) default '부산');
+
+no=3,4,7 서울
+SQL> update members
+  2  set addr='서울'
+  3  where no=3 or no=4 or no=7;
+
+no=2,5 제주
+SQL> update members
+  2  set addr='제주'
+  3  where no in(2,5);
+
+나머지 부산
+
+
+
+지역별 인원수, 급여 평균을 인원수 내림차순 정렬
+SQL> select addr, count(*), avg(salary)
+  2      from members
+  3      group by addr
+  4      order by count(*) desc;
+
+
+SQL> select addr, count(*) 인원수 , avg(salary)
+  2  from members
+  3  group by addr
+  4  order by 인원수 desc;
+
+ADDR                     인원수 AVG(SALARY)
+-------------------- ---------- -----------
+부산                          6      167460
+서울                          3  453.333333
+제주                          2       477.5
+
+
+
+
+
+salary가 500이상인 레코드를 조건(대상)으로 지역별 인원수, 급여 평균을 인원수 내림차순 정렬
+
+SQL> select addr, count(*) 인원수 , avg(salary)
+  2   from members
+  3   where salary >= 500
+  4   group by addr
+  5   order by 인원수 desc;
+
+ADDR                     인원수 AVG(SALARY)
+-------------------- ---------- -----------
+부산                          4    251077.5
+제주                          1         705
+서울                          1         805
+
+
+
+90년생 레코드를 대상으로 성별별 인원수, 급여 평균 구하기
+
+SQL> select gender, count(*) 인원수, avg(salary)"급여 평균"
+  2  from members
+  3  where birth between '90-1-1' and '99-12-31'
+  4  group by gender;
+
+GEND     인원수  급여 평균
+---- ---------- ----------
+여자          2        400
+남자          2      452.5
+
+
+
+
+
+SQL> select avg(salary)  from members;
+
+AVG(SALARY)
+-----------
+ 1002.27273
+
+
+9번 salary 4000으로 수정
+SQL> update members set salary=4000
+        where no=9;
+
+
+
+평균보다 큰 salary 레코드 갯수 조회
+SQL> select count(*) from members
+  2  where salary>1002.27273;
+
+SQL> select count(*) from members
+  2  where salary>(select avg(salary)  from members);
+
+
+  COUNT(*)
+----------
+         2
+
+
+
+
+부서별 salary 평균
+
+SQL> select did, avg(salary)
+  2  from members
+  3  group by did;
+
+DID    AVG(SALARY)
+------ -----------
+개발부         922
+영업부         435
+홍보부  1703.33333
+
+
+
+SQL> select did, avg(salary)
+  2  from members
+  3  where avg(salary) > 500
+  4  group by did;
+where avg(salary) > 500
+      *
+3행에 오류:
+ORA-00934: 그룹 함수는 허가되지 않습니다
+
+
+
+SQL> select did, avg(salary)
+  2  from members
+  3  group by did
+  4  having avg(salary) >= 500;
+
+DID    AVG(SALARY)
+------ -----------
+개발부         922
+홍보부  1703.33333
+
+having은 언제 쓰나 : 조건에 그룹함수가 들어갈 때 where 대신 having 쓴다. 
+
+
+
+SQL> select did, avg(salary)
+  2  from members
+  3  group by did
+  4  having avg(salary) >= 500
+  5  order by did desc;
+
+DID    AVG(SALARY)
+------ -----------
+홍보부  1703.33333
+개발부         922
+
+
+
+
+addr가 부산인 레코드만 대상으로(11->6)
+부서(did)별로 그룹 묶어
+salary 평균이 500이상인 레코드만 
+부서별로 내림차순 정렬
+
+SQL> select did, avg(salary)
+  2   from members
+  3   where addr='부산'
+  4    group by did
+  5    having avg(salary) >= 500
+  6   order by did desc;
+
+DID    AVG(SALARY)
+------ -----------
+홍보부        4000
+개발부        1090
+
+
+
+salary가 평균보다 높은 사람 대상
+SQL> select did, avg(salary)
+  2  from members
+  3  where salary >= (select avg(salary) from members)
+  4  group by did;
+
+DID    AVG(SALARY)
+------ -----------
+개발부        3055
+홍보부        4000
+
+
+부서별 평균이 전체 평균보다 높은 부서
+SQL> select did, avg(salary)
+  2  from members
+  3  group by did
+  4  having avg(salary) >= (select avg(salary) from members);
+
+DID    AVG(SALARY)
+------ -----------
+홍보부  1703.33333
+
+
+
+생일이 90-1-1 이후인 사람만 대상으로 
+주소별로 급여 평균을 구하고
+급여 평균이 500이상인 레코드만 조회
+
+SQL> select addr, avg(salary)
+  2  from members
+  3  where birth >= '90-1-1'
+  4  group by addr
+  5  having avg(salary) >= 500;
+
+ADDR                 AVG(SALARY)
+-------------------- -----------
+서울                         805
+부산                        1550
+
+
+
+지역별 인원수 조회
+
+select addr as "지역별", count(*) as "인원수"
+from members
+group by addr;
+지역별                   인원수
+-------------------- ----------
+서울                          3
+부산                          6
+제주                          2
+
+
+부서별 인원수 조회
+select did as "부서별", count(*) as "인원수"
+from members
+group by did;
+
+
+
+부서별, 지역별 그룹묶어 인원수 조회
+SQL> select did, addr, count(*) 인원수
+  2  from members
+  3  group by did, addr;
+
+DID    ADDR                     인원수
+------ -------------------- ----------
+영업부 제주                          2
+개발부 서울                          1
+홍보부 서울                          2
+홍보부 부산                          1
+개발부 부산                          4
+영업부 부산                          1
+
+6 행이 선택되었습니다.
+
+
+
+부서별, 지역별 그룹묶어 인원수 조회
+select did, addr , count(*) 인원수 from members
+where did = '개발부' and addr = '부산'
+group by did, addr;
+
+
+DID    ADDR                     인원수
+------ -------------------- ----------
+개발부 부산                          4
+
+
+
+부산에 사는 여자 인원수 조회
+SQL> select addr, gender, count(*) 인원수
+  2  from members
+  3  where addr='부산' and gender='여자'
+  4  group by addr, gender;
+
+ADDR         GEND     인원수
+------------ ---- ----------
+부산         여자          5
+
+
+
+SQL> select count(*) 인원수
+  2  from members
+  3  where addr='부산' and gender='여자';
+
+    인원수
+----------
+         5
+
+
+---------------------------------------------------------------
+
+
+SQL> select * from members
+  2  where no in(2,4,6,8,10);
+
+SQL> select * from members
+  2  where mod(no,2)=0;
+
+
+  NO NAME     SALARY BIRTH    EMAIL          GEND DID    ADDR
+---- ------ -------- -------- -------------- ---- ------ ------
+   2 티파니      705 85/01/02 bbb@daum.net   여자 영업부 제주
+   4 효연        805 99/01/02 xyz@daum.net   남자 홍보부 서울
+   6 제시카      655 85/12/02 ccc@daum.net   여자 개발부 부산
+   8 유리        350 85/12/02 qwer@naver.com 여자 영업부 부산
+  10 수지        550 99/02/02 ddd@naver.com  여자 개발부 부산
+
+
+
+SQL> select user from dual;
+
+USER
+--------------------------------------------------------------------------------
+JSPID
+
+
+SQL> select sysdate from dual;
+
+SYSDATE
+--------
+20/12/11
+
+
+SQL> select systimestamp from dual;
+
+SYSTIMESTAMP
+---------------------------------------------------------------------------
+20/12/11 16:07:43.171000 +09:00
+
+
+
+SQL> select to_char(sysdate,'yyyy_mm/dd hh24:mi:ss') from dual;
+
+TO_CHAR(SYSDATE,'YYYY_MM/DDHH24:MI:SS'
+--------------------------------------
+2020_12/11 16:11:37
+
+
+
+birth에서 월만 조회
+select to_char(birth,'mm') from members;
+
+TO_C
+----
+02
+12
+01
+11
+01
+08
+12
+12
+12
+12
+02
+
+Select name, to_char(birth,'yyyy'), to_char(sysdate,'yyyy')-to_char(birth,'yyyy')+1 as age 
+from members;
+
+
+NAME   TO_CHAR(        AGE
+------ -------- ----------
+아이유 1971             50
+제시카 1990             31
+티파니 1985             36
+수영   1975             46
+효연   1999             22
+서현   1995             26
+제시카 1985             36
+유리   1985             36
+유리   1985             36
+써니   2020              1
+수지   1999             22
+
+
+Select name, to_char(birth,'yyyy'), to_char(sysdate,'yy')-to_char(birth,'yy')+1 as age 
+from members;
+NAME   TO_CHAR(        AGE
+------ -------- ----------
+아이유 1971            -50
+제시카 1990            -69
+티파니 1985            -64
+수영   1975            -54
+효연   1999            -78
+서현   1995            -74
+제시카 1985            -64
+유리   1985            -64
+유리   1985            -64
+써니   2020              1
+수지   1999            -78
+
+
+
+
+birth가 2월인 레코드만 조회
+SQL> select * from members
+  2  where to_char(birth,'MM')='02';
+
+  NO NAME     SALARY BIRTH    EMAIL          GEND DID    ADDR
+---- ------ -------- -------- -------------- ---- ------ ------
+  11 아이유     3055 71/02/03 abc@daum.net   여자 개발부 부산
+  10 수지        550 99/02/02 ddd@naver.com  여자 개발부 부산
+
+
+
+생일이 짝수월인 레코드 조회
+SQL> select name,birth
+  2  from members
+  3  where mod( to_char(birth,'mm'),2)=0;
+
+NAME   BIRTH
+------ --------
+아이유 71/02/03
+제시카 90/12/25
+서현   95/08/21
+제시카 85/12/02
+유리   85/12/02
+유리   85/12/02
+써니   20/12/09
+수지   99/02/02
+
+8 행이 선택되었습니다.
+
+
+SQL> select to_char(sysdate,'d') from dual; (1:일,2:월,3:,4:,5:,6:금,7:)
+
+TO
+--
+6
+
+
+SQL> select to_char(sysdate,'day') from dual;
+
+TO_CHAR(SYSDATE,'DAY')
+------------------------
+금요일
+
+
+SQL> select to_char(sysdate,'dy') from dual;
+
+TO_CHAR(
+--------
+금
+
+
+
+mod,count,avg,sum,max,min
+to_char
+to_date
+
+
+
+SQL> select round(789.123456), round(0.123456), round(0.123456,4)
+  2  from dual;
+
+ROUND(789.123456) ROUND(0.123456) ROUND(0.123456,4)
+----------------- --------------- -----------------
+              789               0             .1235
+
+
+
+SQL> select round(789.923456), round(0.823456), round(0.123456,4)
+  2  from dual;
+
+ROUND(789.923456) ROUND(0.823456) ROUND(0.123456,4)
+----------------- --------------- -----------------
+              790               1             .1235
+
+
+
+SQL> select round(123.9876, -1) from dual;
+
+ROUND(123.9876,-1)
+------------------
+               120
+
+SQL> select round(127.9876, -1) from dual;
+
+ROUND(127.9876,-1)
+------------------
+               130
+
+
+-- ceil : 
+SQL> select ceil(123.1234) from dual;
+
+CEIL(123.1234)
+--------------
+           124
+
+-- floor:
+SQL> select floor(123.987) from dual;
+
+FLOOR(123.987)
+--------------
+           123
+
+
+SQL> select mod(77,4) , 77/4 from dual;
+
+ MOD(77,4)       77/4
+---------- ----------
+         1      19.25
+
+
+
+
+salary 평균 소수 아래 2자리까지만 조회
+SQL> select avg(salary),round(avg(salary),2)
+  2  from members;
+
+AVG(SALARY) ROUND(AVG(SALARY),2)
+----------- --------------------
+ 1002.27273              1002.27
+
+
+SQL> select lower('apPLe'), upper('apPLe'), initcap('niCe dAy')
+  2  from dual;
+
+LOWER('APP UPPER('APP INITCAP('NICEDAY
+---------- ---------- ----------------
+apple      APPLE      Nice Day
+
+
+SQL> select * from members
+  2  WHERE EMAIL like '%DAUM%';
+
+선택된 레코드가 없습니다.
+
+
+
+SQL> select * from members
+  2  where email like lower('%DAUM%');
+
+ NO NAME       SALARY BIRTH    EMAIL          GEND DID    ADDR
+--- ------ ---------- -------- -------------- ---- ------ ------
+ 11 아이유       3055 71/02/03 abc@daum.net   여자 개발부 부산
+  2 티파니        705 85/01/02 bbb@daum.net   여자 영업부 제주
+  4 효연          805 99/01/02 xyz@daum.net   남자 홍보부 서울
+  6 제시카        655 85/12/02 ccc@daum.net   여자 개발부 부산
+
+
+
+select * from members
+where upper(email) like '%DAUM%';
+
+
+
+SQL> select length('카페 라떼'), length('caffe latte'),
+  2  lengthb('카페 라떼'), lengthb('caffe latte')
+  3  from dual;
+
+LENGTH('카페라떼') LENGTH('CAFFELATTE') LENGTHB('카페라떼')
+------------------ -------------------- -------------------
+LENGTHB('CAFFELATTE')
+---------------------
+                 5                   11                  13
+                   11
+
+
+length('카페 라떼'):5
+length('caffe latte'):11
+lengthb('카페 라떼'):13
+lengthb('caffe latte'):11
+
+
+이름이 3자인 레코드 조회
+
+select * from members
+where length(name) = 3;
+
+ NO NAME       SALARY BIRTH    EMAIL          GEND DID    ADDR
+--- ------ ---------- -------- -------------- ---- ------ ------
+ 11 아이유       3055 71/02/03 abc@daum.net   여자 개발부 부산
+  1 제시카        100 90/12/25                남자 개발부 부산
+  2 티파니        705 85/01/02 bbb@daum.net   여자 영업부 제주
+  6 제시카        655 85/12/02 ccc@daum.net   여자 개발부 부
+
+
+
+SQL> select substr('you are not alone',9,3),
+  2  substr('you are not alone',5),
+  3  substr('you are not alone',1,5)
+  4  from dual;
+
+SUBSTR SUBSTR('YOUARENOTALONE',5) SUBSTR('YO
+------ -------------------------- ----------
+not    are not alone              you a
+
+
+
+replace('작업대상','바꿀문자열','바뀔문자열')
+SQL> select replace('you are not alone you', 'you', 'we')
+  2  from dual;
+
+REPLACE('YOUARENOTALONEYOU','YOU','WE'
+--------------------------------------
+we are not alone we
+
+
+instr : 위치 찾는 함수
+SQL> select instr('abcdefg','c') from dual;
+
+INSTR('ABCDEFG','C');
+
+--------------------
+                   3
+
+
+
+SQL> select instr('abcdefg','x') from dual;
+
+INSTR('ABCDEFG','X')
+--------------------
+                   0
+
+
+
+email의 daum을 google로 변경해서 조회
+select replace(email,'daum','google') from members;
+
+=================================================
+
+
+조인(join)
+
+
+
+drop table producer;
+create table producer(
+	p_code varchar2(10) primary key,
+	p_name varchar2(10),
+	p_price number
+);
+
+insert into producer(p_code, p_name,p_price  )
+values('A01','운동화',1000);
+
+
+insert into producer(p_code, p_name, p_price)
+values('A02','원피스',2000);
+
+
+insert into producer(p_code, p_name, p_price)
+values('A03','바지',3000);
+
+
+
+
+drop table consumer;
+create table consumer(
+	c_code varchar2(10) primary key,
+	c_name varchar2(10),
+	c_price number,
+	c_addr varchar2(10)
+);
+
+
+insert into consumer
+values('A01','전지현',1100,'서울');
+
+insert into consumer(c_code, c_name, c_price, c_addr)
+values('A02','김수현',2100,'부산');
+
+insert into consumer(c_code, c_name, c_price, c_addr)
+values('A03','아이유',3100,'제주');
+
+
+SQL> select p_code,p_name, c_name,c_price
+  2  from producer, consumer
+  3  where p_code = c_code;
+
+P_CODE               P_NAME               C_NAME                  C_PRICE
+-------------------- -------------------- -------------------- ----------
+A01                  운동화               전지현                     1100
+A02                  원피스               김수현                     2100
+A03                  바지                 아이유                     3100
+
+
+producer의 p_code 를 code로 변경
+consumer의 c_code 를 code로 변경
+
+alter table producer rename column p_code to code;
+
+alter table consumer rename column c_code to code;
+
+
+SQL> select code,p_name, c_name,c_price
+  2     from producer, consumer
+  3     where code = code;
+   where code = code
+                *
+3행에 오류:
+ORA-00918: 열의 정의가 애매합니다
+
+
+
+SQL> select producer.code, p_name, c_name, c_price
+  2  from producer, consumer
+  3  where producer.code = consumer.code;
+
+CODE                 P_NAME               C_NAME                  C_PRICE
+-------------------- -------------------- -------------------- ----------
+A01                  운동화               전지현                     1100
+A02                  원피스               김수현                     2100
+A03                  바지                 아이유
+
+
+
+-- ~~~ 안된다.  꼭 써야한다.
+
+SQL> select pro.code, p_name, c_name, c_price
+    from producer  pro, consumer  con
+    where pro.code = con.code;
+
+CODE                 P_NAME               C_NAME                  C_PRICE
+-------------------- -------------------- -------------------- ----------
+A01                  운동화               전지현                     1100
+A02                  원피스               김수현                     2100
+A03                  바지                 아이유
+
+
+-- 추가
+
+insert into producer(code, p_name, p_price)
+values('A04','가방',4000);
+
+
+insert into consumer(code, c_name, c_price, c_addr)
+values('A05','태연',3100,'제주');
+
+
+교집합 조인(inner join)
+SQL> select pro.code, p_name, c_name,c_price
+  2  from producer pro, consumer con
+  3  where pro.code = con.code;
+
+CODE                 P_NAME               C_NAME                  C_PRICE
+-------------------- -------------------- -------------------- ----------
+A01                  운동화               전지현                     1100
+A02                  원피스               김수현                     2100
+A03                  바지                 아이유                     3100
+
+
+
+select pro.code, p_name 상품명, c_name,c_price
+from producer pro inner join consumer con
+on pro.code = con.code;
+
+CODE                 상품명               C_NAME                  C_PRICE
+-------------------- -------------------- -------------------- ----------
+A01                  운동화               전지현                     1100
+A02                  원피스               김수현                     2100
+A03                  바지                 아이유
+
+
+select pro.code, p_name 상품명, c_name,c_price
+from producer pro  join consumer con
+on pro.code = con.code;
+
+CODE                 상품명               C_NAME                  C_PRICE
+-------------------- -------------------- -------------------- ----------
+A01                  운동화               전지현                     1100
+A02                  원피스               김수현                     2100
+A03                  바지                 아이유                     3100
+
+
+
+소비자가격이 2000원 이상인 상품의 
+공급코드, 상품명, 구매자이름, 소비자가격을 조회하기
+
+
+SQL> select pro.code 공급코드, pro.p_name 상품명,
+  2          con.c_name 구매자이름, c_price 소비자가격
+  3  from producer pro, consumer con
+  4  where pro.code = con.code and c_price>=2000;
+
+공급코드             상품명               구매자이름           소비자가격
+------------ -------------- -------------------- ----------
+A02                  원피스               김수현                     2100
+A03                  바지                 아이유                     3100
+
+
+
+
+SQL> select pro.code 공급코드, pro.p_name 상품명,
+  2  con.c_name 구매자이름, c_price 소비자가격
+  3  from producer pro inner join consumer con
+  4  on pro.code = con.code and c_price>=2000;
+
+공급코드             상품명               구매자이름           소비자가격
+-------------------- -------------------- -------------------- ----------
+A02                  원피스               김수현                     2100
+A03                  바지                 아이유                     3100
+
+
+
+
+
+SQL> select pro.code, p_name, con.code, c_name
+  2  from producer pro full outer join consumer con
+  3  on pro.code = con.code;
+
+CODE                 P_NAME     CODE                 C_NAME
+-------------------- ---------- -------------------- ----------
+A01                  운동화     A01                  전지현
+A02                  원피스     A02                  김수현
+A03                  바지       A03                  아이유
+                                    A05                  태연
+A04                  가방
+
+
+
+ SQL>  select pro.code, p_name, con.code, c_name
+  2    from producer pro right outer join consumer con
+  3    on pro.code = con.code;
+
+CODE                 P_NAME     CODE                 C_NAME
+-------------------- ---------- -------------------- ----------
+A01                  운동화     A01                  전지현
+A02                  원피스     A02                  김수현
+A03                  바지       A03                  아이유
+                                    A05                  태연
+
+
+
+
+SQL> select pro.code, p_name, con.code, c_name
+  2  from producer pro left outer join consumer con
+  3  on pro.code = con.code;
+
+CODE                 P_NAME     CODE                 C_NAME
+-------------------- ---------- -------------------- ----------
+A01                  운동화     A01                  전지현
+A02                  원피스     A02                  김수현
+A03                  바지       A03                  아이유
+A04                  가방
+
+
+sequence 이름 : emp_seq
+
+drop sequence emp_seq;
+
+create sequence emp_seq
+	increment by 1
+	start with 1
+	minvalue 1;
+
+
+drop table emp;
+create table emp(
+	empno number primary key,
+	ename varchar2(10),
+	jikgup varchar2(10),
+	hiredate date,
+	salary number,
+	deptno number
+);
+
+
+insert into emp
+values(emp_seq.nextval,'kim','과장','2000-3-4', 10000,10);
+
+
+insert into emp
+values(emp_seq.nextval,'lee','부장','2000/3/4',10000,20);
+
+
+insert into emp
+values(emp_seq.nextval,'park','부장','2000/3/4',10000,30);
+
+
+insert into emp
+values(emp_seq.nextval,'choi','과장','2000/3/4',10000,20);
+
+
+insert into emp
+values(emp_seq.nextval,'jung','대리','2000/3/4',10000,10);
+
+commit;
+select * from emp;
+
+
+drop table dept;
+create table dept(
+	deptno number primary key,
+	dname varchar2(10)
+);
+
+insert into dept values(10,'홍보부');
+insert into dept values(20,'인사부');
+insert into dept values(30,'연구부');
+insert into dept values(40,'개발부');
+commit;
+select * from dept;
+
+
+SQL> select empno, ename, jikgup,emp.deptno,dname
+  2  from emp inner join dept
+  3  on emp.deptno=dept.deptno;
+
+     EMPNO ENAME      JIKGUP                   DEPTNO DNAME
+---------- ---------- ----------- ---------- ------------
+         1 kim        과장                         10 홍보부
+         2 lee        부장                         20 인사부
+         3 park       부장                         30 연구부
+         4 choi       과장                         20 인사부
+         5 jung       대리                         10 홍보부
+
+
+
+SQL> select empno, ename, jikgup,emp.deptno,dname
+  2  from emp , dept
+  3  where emp.deptno=dept.deptno;
+
+     EMPNO ENAME      JIKGUP                   DEPTNO DNAME
+---------- ---------- --------------- ---------- ---------
+         1 kim        과장                         10 홍보부
+         2 lee        부장                         20 인사부
+         3 park       부장                         30 연구부
+         4 choi       과장                         20 인사부
+         5 jung       대리                         10 홍보부
+
+
+
+natural join : 
+~쓰면 안됨
+SQL> select empno, ename, jikgup, deptno, dname
+  2  from emp natural join dept;
+
+     EMPNO ENAME      JIKGUP                   DEPTNO DNAME
+---------- ---------- -------------------- ---------- --------------------
+         1 kim        과장                         10 홍보부
+         2 lee        부장                         20 인사부
+         3 park       부장                         30 연구부
+         4 choi       과장                         20 인사부
+         5 jung       대리                         10 홍보부
+
+
+alter table dept add(jikgup varchar2(10) default '과장');
+
+
+select empno, ename, jikgup, deptno, dname
+from emp natural join dept;
+
+
+
+
+self join
+
+drop table emp;
+create table emp(
+	empno number primary key,
+	ename varchar2(10),
+	position varchar2(10),
+	mgr number, -- 매니저 번호
+	deptno number
+);
+
+insert into emp values(1111,'태연','사원',1122,10);
+insert into emp values(1112,'수영','대리',1123,20);
+insert into emp values(1113,'서현','과장',1121,30);
+insert into emp values(1114,'효연','대리',1121,10);
+insert into emp values(1115,'유리','사원',1122,30);
+insert into emp values(1116,'써니','과장',1123,20);
+
+insert into emp(empno,ename,position,mgr) values(1121,'효린','부장',1123);
+insert into emp(empno,ename,position) values(1122,'보라','이사');
+insert into emp(empno,ename,position) values(1123,'다솜','사장');
+
+
+commit;
+
+select * from emp;
+
+
+SQL> select a.ename emp_name, b.ename mgr_name
+  2  from emp a, emp b
+  3  where a.mgr = b.empno;
+
+EMP_NAME             MGR_NAME
+-------------------- --------------------
+서현                 효린
+효연                 효린
+태연                 보라
+유리                 보라
+수영                 다솜
+써니                 다솜
+효린                 다솜
+
+
+inner join
+outer join 
+natural join
+self join
+
+
+=================================================================
+
+drop table person;
+
+create table person(
+	num number primary key,
+	id varchar2(10),
+	name varchar2(10),
+	addr varchar2(10)
+);
+
+insert into person values(1,'son','손흥민','제주');
+insert into person values(3,'park','박세리','대전');
+
+commit;
+col id for a10;
+select * from person;
+
+
+create table person2
+as
+select num,id from person;
+
+
+
+insert into person values(4,'kang','강호동','마산');
+
+SQL> select * from person;
+
+       NUM ID         NAME   ADDR
+---------- ---------- ------ ------
+         1 son        손흥민 제주
+         3 park       박세리 대전
+         4 kang       강호동 마산
+
+SQL> select * from person2;
+
+       NUM ID
+---------- ----------
+         1 son
+         3 park
+
+
+
+뷰(view)
+- 가상 테이블
+- 복잡한 query문을 통해서 얻은 결과를 간단한 query로 얻을 수 있다.
+
+
+SQL> create or replace view person_view
+  2  as
+  3  select num,id from person;
+create or replace view person_view
+                       *
+1행에 오류:
+ORA-01031: 권한이 불충분합니다
+
+
+SQL>
+SQL> conn
+사용자명 입력: sys
+비밀번호 입력:
+연결되었습니다.
+SQL> show user;
+USER은 "SYS"입니다
+SQL> show user;
+USER은 "SYS"입니다
+SQL> grant create view to jspid;
+
+권한이 부여되었습니다.
+
+SQL> create or replace view person_view
+  2  as
+  3  select num,id from person;
+
+
+[sql developer에서 관리자로 접속]
+사용자 이름 : sys as sysdba
+비번 : oracle
+
+
+insert into person values(5,'hong','홍길동','강릉');
+
+
+SQL> select * from person;
+
+       NUM ID         NAME   ADDR
+---------- ---------- ------ ------
+         1 son        손흥민 제주
+         3 park       박세리 대전
+         4 kang       강호동 마산
+         5 hong       홍길동 강릉
+
+SQL> select * from person_view;
+
+       NUM ID
+---------- ----------
+         1 son
+         3 park
+         4 kang
+         5 hong
+
+
+SQL> insert into person_view values(6,'kim');
+
+1 개의 행이 만들어졌습니다.
+
+SQL> select * from person_view;
+
+       NUM ID
+---------- ----------
+         1 son
+         3 park
+         4 kang
+         5 hong
+         6 kim
+
+SQL> select * from person;
+
+       NUM ID         NAME   ADDR
+---------- ---------- ------ ------
+         1 son        손흥민 제주
+         3 park       박세리 대전
+         4 kang       강호동 마산
+         5 hong       홍길동 강릉
+         6 kim
+
+
+-- 
+
+person_view의 6번을 choi로 수정
+update person_view
+set id='choi'
+where num=6;
+
+
+person의 3번을 lee로 수정
+update person set id='lee'
+where num=3;
+
+drop table person;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,150 @@
+foreign_key(외래키)
+
+
+drop table department;
+create table department(
+	dno number,
+	dname varchar2(15)
+);
+
+drop table employee;
+create table employee(
+	eno number,
+	ename varchar2(10),
+	dno number
+);
+
+insert into department values(10,'인사부');
+insert into department values(20,'영업부');
+insert into department values(30,'홍보부');
+  
+insert into employee values(1,'kim',30);
+insert into employee values(2,'choi',10);
+insert into employee values(3,'hong',20);
+insert into employee values(4,'park',30);
+insert into employee values(5,'jung',60);
+
+
+select * from department;
+select * from employee;
+
+commit;
+
+
+----------------- 외래키 설정 -----------------------
+
+부모테이블 : 다른 테이블에 의해 참조되는 테이블
+drop table department cascade constraints;
+-- cascade constraints : 
+create table department(
+	dno number primary key, -- 부모키(참조키) 
+	dname varchar2(15)
+);
+
+
+
+자식 테이블 : 다른 테이블의 칼럼값을 참조하는 테이블 
+drop table employee;
+create table employee(
+	eno number,
+	ename varchar2(10),
+	dno number references department(dno) on delete cascade -- 외래키 
+);
+
+-- on delete set null : 
+-- on delete cascade : 
+
+
+insert into department values(10,'인사부');
+insert into department values(20,'영업부');
+insert into department values(30,'홍보부');
+
+insert into employee values(1,'kim',30);
+insert into employee values(2,'choi',10);
+insert into employee values(3,'hong',20);
+insert into employee values(4,'park',30);
+insert into employee values(5,'jung',60); --에러 :  
+
+
+select * from department;
+select * from employee;
+
+commit;
+
+SQL> delete from department where dno=30;
+
+
+
+drop table producer cascade constraints;
+create table producer(
+p_code varchar2(10) primary key,
+p_name varchar2(10), 
+p_price number
+);
+
+
+drop table consumer;
+create table consumer(
+c_code varchar2(10) unique references producer(p_code) on delete set null,
+c_name varchar2(10),
+c_price number,
+c_addr varchar2(10)
+);
+
+unique : 
+왜 primary key는 왜 안될까 : 
+
+
+
+insert into producer(p_code, p_name,p_price  )
+values('A01','운동화',1000);
+
+
+insert into producer(p_code, p_name, p_price)
+values('A02','원피스',2000);
+
+
+insert into producer(p_code, p_name, p_price)
+values('A03','바지',3000);
+
+
+insert into consumer
+values('A01','전지현',1100,'서울');
+
+insert into consumer(c_code, c_name, c_price, c_addr)
+values('A02','김수현',2100,'부산');
+
+insert into consumer(c_code, c_name, c_price, c_addr)
+values('A03','아이유',3100,'제주');
+
+insert into consumer(c_code, c_name, c_price, c_addr)
+values('A04','아이유',3100,'제주');  -- 에러 
+
+
+
+
+SQL> select * from producer;
+
+P_CODE               P_NAME                  P_PRICE
+-------------------- -------------------- ----------
+A01                  운동화                     1000
+A02                  원피스                     2000
+A03                  바지                       3000
+
+
+
+SQL> select * from consumer;
+
+C_CODE               C_NAME           C_PRICE C_ADDR
+-------------------- ------- ---------- ---------------
+A01                  전지현                     1100 서울
+A02                  김수현                     2100 부산
+A03                  아이유                     3100 제주
+
+
+commit;
+
+
+
+
+

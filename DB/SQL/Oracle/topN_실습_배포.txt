@@ -1,0 +1,361 @@
+Inline View(Top N 절)
+
+정의 
+	from 절에 select 구문이 나온다.
+
+특수 컬럼(pseudo 컬럼)
+	rownum
+		테이블에 레코드가 들어간 순서를 기억하고 있는 특수 컬럼
+		시스템은 이것을 토대로 들어온 순서를 관리한다.
+	rowid
+		행을 구분하기 위한 고유 문자열(unique)
+		DB 전체에서 유일 무이하다.(인덱스에 사용)
+
+rownum, rowid에 대한 실습
+-- 다음과 같이 데이터를 입력하고 점수 랭킹 5위부터 6위까지 조회하시오
+-- 정답은 티아라와 소녀시대
+drop table rowtest;
+col name for a20
+create table rowtest(
+	name varchar2(30),
+	jumsu number
+);
+
+insert into rowtest values('소녀시대', 30 );
+insert into rowtest values('원더걸스', 20 );
+insert into rowtest values('빅뱅', 50 );
+insert into rowtest values('애프터스쿨', 80 );
+insert into rowtest values('비스트', 70 );
+insert into rowtest values('레드벨벳', 10 );
+insert into rowtest values('티아라', 40 );
+insert into rowtest values('EXO', 60 );
+commit;
+
+-- rowtest 테이블에 인서트시 [소녀시대] 데이터가 가장 먼저 인서트 되었다.
+select rownum, name, jumsu from rowtest;
+
+
+   ROWNUM NAME                      JUMSU
+--------- -------------------- ----------
+        1 소녀시대                     30
+        2 원더걸스                     20
+        3 빅뱅                         50
+        4 애프터스쿨                   80
+        5 비스트                       70
+        6 레드벨벳                         10
+        7 티아라                       40
+        8 EXO                         60
+
+
+-- 원더걸스의 rownum는 얼마인가요?  2
+select rowid, rownum, name, jumsu
+from rowtest;
+
+delete from rowtest where name = '소녀시대' ;
+
+-- 소녀시대가 사라진 후 원더걸스의 rownum는 얼마인가요?  1
+select rowid, rownum, name, jumsu
+from rowtest;
+
+ROWID                  ROWNUM NAME                      JUMSU
+------------------ ---------- -------------------- ----------
+AAADYFAABAAAKYyAAB          1 원더걸스                     20
+AAADYFAABAAAKYyAAC          2 빅뱅                         50
+AAADYFAABAAAKYyAAD          3 애프터스쿨                   80
+AAADYFAABAAAKYyAAE          4 비스트                       70
+AAADYFAABAAAKYyAAF          5 레드벨벳                         10
+AAADYFAABAAAKYyAAG          6 티아라                       40
+AAADYFAABAAAKYyAAH          7 EXO                         60
+
+
+-- rownum은 그때 그때 수시로 바뀔수 있지만, 인서트 된 순서는 흐트러지지 않는다.
+
+rollback ;
+
+-- 중요 : order by를 사용해도 rownum은 변함이 없다.
+select rownum, name, jumsu from rowtest order by jumsu desc;
+
+    ROWNUM NAME                      JUMSU
+---------- -------------------- ----------
+         3 애프터스쿨                   80
+         4 비스트                       70
+         7 EXO                         60
+         2 빅뱅                         50
+         6 티아라                       40
+         1 원더걸스                     20
+         5 레드벨벳                         10
+
+애프터스쿨 rownum이 3인 이유 : 
+
+
+-- rownum을 인위적으로 변경하려면 인라인(Inline) 뷰를 사용해야 한다.
+-- Inline View 필수 요소
+	from 절에 사용되는 서브 쿼리(select 절)
+	사용 가능한 비교 연산자 : <, <=
+
+
+SQL> select rownum,name, jumsu
+  2  from rowtest
+  3  where jumsu>=30 and jumsu<=70
+  4  order by jumsu desc;
+
+    ROWNUM NAME                      JUMSU
+---------- -------------------- ----------
+         2 비스트                       70
+         4 EXO                          60
+         1 빅뱅                         50
+         3 티아라                       40
+
+
+
+1~3등 레코드 조회
+
+
+select rownum,name,jumsu
+from (select rownum, name, jumsu from rowtest order by jumsu desc);
+
+
+SQL> select rownum,name,jumsu
+    from (select rownum, name, jumsu from rowtest order by jumsu desc);
+
+    ROWNUM NAME                      JUMSU
+---------- -------------------- ----------
+         1 애프터스쿨                   80
+         2 비스트                       70
+         3 EXO                          60
+         4 빅뱅                         50
+         5 티아라                       40
+         6 원더걸스                     20
+         7 레드벨벳                     10
+
+애프터스쿨 rownum이 1인 이유 : 
+
+
+select rownum,name,jumsu
+    from (select rownum, name, jumsu from rowtest order by jumsu desc)
+where rownum <= 3;
+
+    ROWNUM NAME                      JUMSU
+---------- -------------------- ----------
+         1 애프터스쿨                   80
+         2 비스트                       70
+         3 EXO                          60
+
+
+5~6등 레코드 조회
+select rownum,name,jumsu
+    from (select rownum, name, jumsu from rowtest order by jumsu desc)
+where rownum >=5 and rownum<=6;
+
+선택된 레코드가 없습니다.
+
+
+select rownum,name,jumsu
+    from (select rownum, name, jumsu from rowtest order by jumsu desc)
+where rownum between 5 and 6;
+
+선택된 레코드가 없습니다.
+
+
+
+
+SQL> select rownum, name, jumsu from rowtest order by jumsu desc;
+
+    ROWNUM NAME                      JUMSU
+---------- -------------------- ----------
+         3 애프터스쿨                   80
+         4 비스트                       70
+         7 EXO                          60
+         2 빅뱅                         50
+         6 티아라                       40
+         1 원더걸스                     20
+         5 레드벨벳                     10
+
+
+
+select rownum as rank,name,jumsu
+from (select rownum, name, jumsu from rowtest order by jumsu desc);
+
+     RANK NAME                      JUMSU
+---------- -------------------- ----------
+         1 애프터스쿨                   80
+         2 비스트                       70
+         3 EXO                          60
+         4 빅뱅                         50
+         5 티아라                       40
+         6 원더걸스                     20
+         7 레드벨벳                     10
+
+
+
+select rank, name, jumsu
+from (select rownum as rank,name,jumsu
+	from (select rownum, name, jumsu from rowtest order by jumsu desc))
+where rank between 5 and 6;
+
+   RANK NAME                      JUMSU
+---------- -------------------- ----------
+         5 티아라                       40
+         6 원더걸스                     20
+
+
+
+
+select rank, name, jumsu
+from (select rownum as rank,name,jumsu
+	from (select rownum, name, jumsu from rowtest order by jumsu desc))
+where rank >=5 and rank<=6;
+
+     RANK NAME                      JUMSU
+---------- -------------------- ----------
+         5 티아라                       40
+         6 원더걸스                     20
+
+
+
+
+members의 salary 내림차순 정렬, 2~5등 사이의 레코드 조회
+
+SQL> select rownum,name,birth,salary from members
+    order by salary desc;
+
+    ROWNUM NAME                 BIRTH        SALARY
+---------- -------------------- -------- ----------
+        10 써니                 20/12/09       4000
+         1 아이유               71/02/03       3055
+         5 효연                 99/01/02        805
+         3 티파니               85/01/02        705
+         7 제시카               85/12/02        655
+        11 수지                 99/02/02        550
+         9 유리                 85/12/02        350
+         4 수영                 75/11/02        305
+         8 유리                 85/12/02        250
+         6 서현                 95/08/21        250
+         2 제시카               90/12/25        100
+
+
+select rownum as rank, name,birth,salary
+from (select rownum,name,birth,salary from members
+    order by salary desc);
+
+
+    RANK NAME                 BIRTH        SALARY
+---------- -------------------- -------- ----------
+         1 써니                 20/12/09       4000
+         2 아이유               71/02/03       3055
+         3 효연                 99/01/02        805
+         4 티파니               85/01/02        705
+         5 제시카               85/12/02        655
+         6 수지                 99/02/02        550
+         7 유리                 85/12/02        350
+         8 수영                 75/11/02        305
+         9 유리                 85/12/02        250
+        10 서현                 95/08/21        250
+        11 제시카               90/12/25        100
+
+
+select rank, name,birth,salary
+from (select rownum as rank, name,birth,salary
+from (select rownum,name,birth,salary from members
+    order by salary desc))
+where rank between 2 and 5;
+
+     RANK NAME                 BIRTH        SALARY
+---------- -------------------- -------- ----------
+         2 아이유               71/02/03       3055
+         3 효연                 99/01/02        805
+         4 티파니               85/01/02        705
+         5 제시카               85/12/02        655
+
+
+
+
+update rowtest set jumsu = 40
+where name = '원더걸스';
+
+
+update rowtest set jumsu = 60
+where name = '빅뱅';
+
+
+
+select rank, name, jumsu
+from (select rownum as rank,name,jumsu
+	from (select rownum, name, jumsu from rowtest order by jumsu desc))
+where rank between 3 and 5;
+
+
+
+select rownum, name,jumsu, dense_rank() over(order by jumsu desc ) as rank_val
+from rowtest;
+
+  ROWNUM NAME                      JUMSU   RANK_VAL
+---------- -------------------- ---------- ----------
+         3 애프터스쿨                   80          1
+         4 비스트                       70          2
+         7 EXO                          60          3
+         2 빅뱅                         60          3
+         1 원더걸스                     40          4
+         6 티아라                       40          4
+         5 레드벨벳                     10          5
+
+
+
+
+select rownum, name,jumsu, rank() over(order by jumsu desc ) as rank_val
+from rowtest;
+
+
+   ROWNUM NAME                      JUMSU   RANK_VAL
+---------- -------------------- ---------- ----------
+         3 애프터스쿨                   80          1
+         4 비스트                       70          2
+         7 EXO                          60          3
+         2 빅뱅                         60          3
+         1 원더걸스                     40          5
+         6 티아라                       40          5
+         5 레드벨벳                     10          7
+
+
+
+
+
+
+select rownum, name, jumsu, rank_val
+from (select rownum, name,jumsu, dense_rank() over(order by jumsu desc ) as rank_val
+from rowtest)
+where rank_val between 3 and 4;
+
+   ROWNUM NAME                      JUMSU   RANK_VAL
+---------- -------------------- ---------- ----------
+         1 빅뱅                         60          3
+         2 EXO                          60          3
+         3 원더걸스                     40          4
+         4 티아라                       40          4
+
+
+
+select rownum, name, jumsu, rank_val
+from (select rownum, name,jumsu, dense_rank() over(order by jumsu desc ) as rank_val
+from rowtest)
+where rank_val >=3 and rank_val<=4;
+
+ ROWNUM NAME                      JUMSU   RANK_VAL
+---------- -------------------- ---------- ----------
+         1 빅뱅                         60          3
+         2 EXO                          60          3
+         3 원더걸스                     40          4
+         4 티아라                       40          4
+
+
+
+
+
+
+
+
+
+
+
+
+
