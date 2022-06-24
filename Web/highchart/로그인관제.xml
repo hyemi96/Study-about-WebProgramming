@@ -1,1 +1,133 @@
 
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.uhygeramgr.control.service.impl.ControlServiceDAO">
+	
+	<select id="selectMapUserTotalCnt" parameterType="userVO" resultType="int">
+		/** selectUserTotalCnt :::  종류별 총 가입자 수 */
+			SELECT COUNT(*) AS '총수'
+			,  CASE USER_TYPE
+			   WHEN 'A' THEN '관리자 총 가입수'
+			   WHEN 'B' THEN 'B2B 총 가입수'
+			   WHEN 'C' THEN 'B2C 총 가입수'
+				ELSE  '기타(없거나 02번일수 있음)'
+				END '종류'
+			FROM DBO.USR_MST_T
+			GROUP BY USER_TYPE
+	</select>
+	
+	<select id="selectLogAccumulateCnt" parameterType="logVO" resultType="int">
+		/** selectTodayCnt ::: 누적 방문수 */
+			SELECT COUNT(*) AS '누적 방문수'
+			FROM DBO.LOG_MST_T A
+			INNER JOIN DBO.USR_MST_T B ON  A.USER_ID = B.USER_ID
+			WHERE 1 = 1 
+			AND A.SYS_CD = #{sysCd}
+			<if test='!"".equals(sysCdExt) and sysCdExt !=null'>
+				AND A.SYS_CD_EXT = #{sysCdExt}
+			</if>
+			<if test='"WEB".equals(osDiv)'>
+				AND A.BROWSER != 'Chrome Mobile WebView'
+			</if>
+			<if test='"APP".equals(osDiv)'>
+				AND A.BROWSER = 'Chrome Mobile WebView'
+			</if>
+	</select>
+	
+	<select id="selectLogTodayCnt" parameterType="logVO" resultType="int">
+		/** selectTodayCnt ::: 오늘 방문수 */
+			SELECT COUNT(*) AS '오늘 총 방문수'
+			FROM DBO.LOG_MST_T A
+			INNER JOIN DBO.USR_MST_T B ON  A.USER_ID = B.USER_ID
+			WHERE 1=1 
+			AND A.SYS_CD = #{sysCd}
+			AND CONVERT(CHAR(10), A.CREATED_AT, 23) = CONVERT(CHAR(10), GETDATE(), 23)
+			<if test='!"".equals(sysCdExt) and sysCdExt !=null'>
+				AND A.SYS_CD_EXT = #{sysCdExt}
+			</if>
+			<if test='"WEB".equals(osDiv)'>
+				AND A.BROWSER != 'Chrome Mobile WebView'
+			</if>
+			<if test='"APP".equals(osDiv)'>
+				AND A.BROWSER = 'Chrome Mobile WebView'
+			</if>
+	</select>
+	
+	<select id="selectLogYesterdayCnt" parameterType="logVO" resultType="int">
+		/** selectYesterDayCnt ::: 어제 방문수 */
+			SELECT COUNT(*) as '어제 방문수'
+			FROM DBO.LOG_MST_T A
+			INNER JOIN DBO.USR_MST_T B ON  A.USER_ID = B.USER_ID
+			WHERE 1 = 1 
+			AND A.SYS_CD = #{sysCd}
+			AND CONVERT(CHAR(10), A.CREATED_AT, 23) = CONVERT(CHAR(10), DATEADD(dd,-1,GETDATE()),23)
+			<if test='sysCdExt !=null and !"".equals(sysCdExt)'>
+				AND A.SYS_CD_EXT = #{sysCdExt}
+			</if>
+			<if test='"WEB".equals(osDiv)'>
+				AND A.BROWSER != 'Chrome Mobile WebView'
+			</if>
+			<if test='"APP".equals(osDiv)'>
+				AND A.BROWSER = 'Chrome Mobile WebView'
+			</if>
+	</select>
+	
+	<select id="selectB2cAppLogCnt" parameterType="logVO" resultType="egovMap">
+		/** selectB2cAppLogCnt ::: B2C 소셜 로그 방문수 */
+		SELECT 
+		COUNT('A') AS totalLogCnt
+		<if test='logYear !=null and !"".equals(logYear)'>
+	   		, A.LOG_YEAR AS logYear
+	   	</if>
+		<if test='logMonth !=null and !"".equals(logMonth)'>
+	   		, A.LOG_MONTH AS logMonth
+	   	</if>
+	   	<if test='logDt !=null and !"".equals(logDt)'>
+	   		, A.LOG_DAY AS logDt
+	   	</if>
+		   , SUM(CASE WHEN ISNULL(B.NAVER_ID, '') != '' THEN 1 ELSE 0 END) AS naverLogCnt
+		   , SUM(CASE WHEN ISNULL(B.KAKAO_ID, '') != '' THEN 1 ELSE 0 END) AS kakaoLogCnt
+		   , SUM(CASE WHEN ISNULL(B.NAVER_ID, '') = '' AND ISNULL(B.KAKAO_ID, '') = '' THEN 1 ELSE 0 END) AS hygeraLogCnt
+		FROM DBO.LOG_MST_T A
+		   INNER JOIN DBO.USR_MST_T B ON A.USER_ID = B.USER_ID
+		WHERE 1=1
+			AND A.SYS_CD = #{sysCd}
+		<if test='sysCdExt !=null and !"".equals(sysCdExt)'>
+			AND A.SYS_CD_EXT = #{sysCdExt}
+		</if>
+		<if test='"WEB".equals(osDiv)'>
+			AND A.BROWSER != 'Chrome Mobile WebView'
+		</if>
+		<if test='"APP".equals(osDiv)'>
+			AND A.BROWSER = 'Chrome Mobile WebView'
+		</if>
+	   	<if test='logYear !=null and !"".equals(logYear)'>
+	   		AND A.LOG_YEAR = #{logYear}
+	   	</if>
+	   	<if test='logMonth !=null and !"".equals(logMonth)'>
+	   		AND A.LOG_MONTH = #{logMonth}
+	   	</if>
+		GROUP BY
+		<if test='logYear !=null and !"".equals(logYear)'>
+	   		A.LOG_YEAR
+	   	</if>
+		<if test='logMonth !=null and !"".equals(logMonth)'>
+	   		, A.LOG_MONTH
+	   	</if>
+	   	<if test='logDt !=null and !"".equals(logDt)'>
+	   		, A.LOG_DAY
+	   	</if>
+		ORDER BY 
+		<if test='logYear !=null and !"".equals(logYear)'>
+	   		A.LOG_YEAR
+	   	</if>
+		<if test='logMonth !=null and !"".equals(logMonth)'>
+	   		, A.LOG_MONTH
+	   	</if>
+	   	<if test='logDt !=null and !"".equals(logDt)'>
+	   		, A.LOG_DAY
+	   	</if>
+	</select>
+
+</mapper>
