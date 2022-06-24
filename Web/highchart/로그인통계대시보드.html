@@ -5,23 +5,6 @@
 <script src="https://code.highcharts.com/modules/accessibility.js"></script>  헤더에 따로 작성-->
 <style>
 
-.highcharts-figure,
-.highcharts-data-table table {
-  min-width: 600px;
-  max-width: 100%;
-  margin: 1em auto;
-}
-
-.highcharts-data-table table {
-  font-family: Verdana, sans-serif;
-  border-collapse: collapse;
-  border: 1px solid #ebebeb;
-  margin: 10px auto;
-  text-align: center;
-  width: 100%;
-  max-width: 500px;
-}
-
 .highcharts-data-table caption {
   padding: 1em 0;
   font-size: 1.2em;
@@ -55,44 +38,9 @@
 }
 
 .highcharts-figure, .highcharts-data-table table {
-	min-width: 600px;
+	min-width: 50%;
 	max-width: 100%;
 	margin: 1em auto;
-}
-
-.highcharts-data-table table {
-	font-family: Verdana, sans-serif;
-	border-collapse: collapse;
-	border: 1px solid #ebebeb;
-	margin: 10px auto;
-	text-align: center;
-	width: 100%;
-	max-width: 500px;
-}
-
-.highcharts-data-table caption {
-	padding: 1em 0;
-	font-size: 1.2em;
-	color: #555;
-}
-
-.highcharts-data-table th {
-	font-weight: 600;
-	padding: 0.5em;
-}
-
-.highcharts-data-table td, .highcharts-data-table th,
-	.highcharts-data-table caption {
-	padding: 0.5em;
-}
-
-.highcharts-data-table thead tr, .highcharts-data-table tr:nth-child(even)
-	{
-	background: #f8f8f8;
-}
-
-.highcharts-data-table tr:hover {
-	background: #f1f7ff;
 }
 
 
@@ -102,8 +50,6 @@
 		
 		//현재 날짜 표기
 		getToday();
-		
-		containerHighcharts();
 		
 		siteChange(); //웹선택
 		
@@ -180,7 +126,10 @@
 					$('#todayCnt').html(arg.TodayCnt);
 					$('#yesterdayCnt').html(arg.YesterdayCnt);
 					$('#accumulateCnt').html(arg.AccumulateCnt);
+					
 					containerHighcharts();
+					
+					weekStatisticHighcharts();
 				},
 				error : function() {
 
@@ -234,12 +183,13 @@
 		console.log(data);
 		
 		let siteOption = [];
-		let dayOption =[];
-		let monthOption =[];
-		let yearOption =[];
+		let dayOption = [];
+		let monthOption = [];
+		let yearOption = [];
 		let kaKaoData = [];
 		let naverData = [];
 		let hygeraData = [];
+		let totalData = [];
 	
 		
 		//ajax를 통해 데이터를 가져온 후 data를 그래프에 넣어준다.
@@ -249,6 +199,7 @@
 				type : 'POST',
 				dataType : 'json',
 				contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+				async : false,
 				success : function(arg) {
 	
 					console.log(arg.selectB2cAppLogCnt);
@@ -262,6 +213,7 @@
 		                	kaKaoData.push( arg.selectB2cAppLogCnt[i]['kakaoLogCnt']);
 		                	naverData.push( arg.selectB2cAppLogCnt[i]['naverLogCnt']);
 		                	hygeraData.push( arg.selectB2cAppLogCnt[i]['hygeraLogCnt']);
+		                	totalData.push( arg.selectB2cAppLogCnt[i]['totalLogCnt']);
 		            	}
 					}
 					
@@ -284,7 +236,7 @@
 					Highcharts.chart('container',{
 						chart : {
 							type : 'column',
-							margin: [0, 10, 65, 10] //css추가
+							margin: [70, 10, 70, 70] //css추가 
 						},
 						title : {
 							text : $('#countTitle').html() +' 소셜 로그인 비율'
@@ -300,7 +252,7 @@
 							stackLabels : {
 								enabled : true,
 								style : {
-									/* fontWeight : 'bold', */
+									fontWeight : 'bold', 
 									color : ( // theme
 									Highcharts.defaultOptions.title.style && Highcharts.defaultOptions.title.style.color)
 											|| '#ffff00'
@@ -331,8 +283,7 @@
 							column : {
 								stacking : 'normal',
 								dataLabels : {
-									enabled : true,
-									shadow : false 
+									enabled : true
 								}
 							}
 						},
@@ -351,7 +302,7 @@
 						} ]
 
 					});
-
+					
 					
 				},
 				error : function() {
@@ -867,47 +818,123 @@
 		});
 	}
 	function weekStatisticHighcharts(){	
-		var title = {
-	       text: '주간 로그인 통계 그래프'   
-	    };
-	    var xAxis = {
-	       categories: ['6일전', '5일전', '4일전', '3일전', '2일전', '1일전','오늘']
-	    };
-	    var yAxis = {
-	       title: {
-	          text: 'total'
-	       }, 
-	       plotLines: [{
-	          value: 0,
-	          width: 1,
-	          color: '#808080'
-	       }]
-	    };   
+		
+		//x값은 오늘 날짜를 구해서 마이너스해서 배열을 만들어준다.
+		let today = $('#presentDay').val();
+		console.log("today :::" + today);
+		
+		let year = $('#presentYear').val();
+		let month = $('#presentMonth').val();
+		let day = $('#presentDay').val();
+		let option = $("#selectLoginStatisticOption").val();
+		
+		let optVal = $('#selectSite').val();
+		
+		let sysCd = "";
+		let sysCdExt = "";
+		let osDiv = "";
+		
+		let tempArray = optVal.split(":");
+		
+		sysCd = tempArray[0];
+		sysCdExt = tempArray[1];
+		osDiv = tempArray[2];
 
-	    var legend = {
-	       layout: 'vertical',
-	       align: 'right',
-	       verticalAlign: 'middle',
-	       borderWidth: 0
-	    };
+		let data = {"sysCd" : sysCd, "sysCdExt" : sysCdExt, "osDiv" : osDiv ,"logYear" : year , "logMonth" : month, "logDt" : day };
+	
+		// 토탈 값을 가져와서 화면에 뿌려준다.
+		let totalData = [];
 
-	    var series =  [
-	       {
-	          name: '방문수',
-	          data: [7.0, 6.9, 9.5, 14.5, 18.2, 21.5, 25.2]
-	       }
-	    ];
+		$.ajax({
+				url : "/control/ajaxSelectB2CLoginData.do",
+				data : data,
+				type : 'POST',
+				dataType : 'json',
+				contentType : "application/x-www-form-urlencoded;charset=UTF-8",
+				async : false,
+				success : function(arg) {
+	
+					console.log(arg.selectB2cAppLogCnt);
+					
+					if (arg.selectB2cAppLogCnt.length > 0) {
+		                for (var i = 0; i < arg.selectB2cAppLogCnt.length; i++) {
+		                	totalData.push( arg.selectB2cAppLogCnt[i]['totalLogCnt']);
+		            	}
+					}
+					
+					let todayData = totalData[totalData.length - 1];
+					let onedayData = totalData[totalData.length - 2];
+					let twodayData = totalData[totalData.length - 3];
+					let threedayData = totalData[totalData.length - 4];
+					let fourdayData = totalData[totalData.length - 5];
+					let fivedayData = totalData[totalData.length - 6];
+					let sixdayData = totalData[totalData.length - 7];
+					
+					let seriesData = new Array();
+					
+					seriesData.push(sixdayData);
+					seriesData.push(fivedayData);
+					seriesData.push(fourdayData);
+					seriesData.push(threedayData);
+					seriesData.push(twodayData);
+					seriesData.push(onedayData);
+					seriesData.push(todayData);
+					
+					console.log("seriesData:::" + seriesData);
+							
+					let chart= {
+						type: 'area'
+					};
+					
+					let title = {
+				       text: $('#countTitle').html() +' 최근 주간 로그인 통계 그래프'
+				    };
+					let xAxis = {
+				       categories: ['6일전', '5일전', '4일전', '3일전', '2일전', '1일전','오늘']
+				    };
+					let yAxis = {
+					   min : 0,
+				       title: {
+				          text: 'Total'
+				       }, 
+				       plotLines: [{
+				          color: '#808080'
+				       }]
+				    };   
 
-	    var json = {};
+					let legend = {
+				       layout: 'vertical',
+				       align: 'right',
+				       verticalAlign: 'middle',
+				       borderWidth: 0
+				    };
 
-	    json.title = title;
-	    json.xAxis = xAxis;
-	    json.yAxis = yAxis;
-	    json.legend = legend;
-		json.series = series;
+					let series =  [
+				       {
+				          name: '방문수',
+				          data: seriesData
+				       }
+				    ];
 
-		$('#weekStatistic').highcharts(json);
+					let json = {};
+				    json.chart = chart;
+				    json.title = title;
+				    json.xAxis = xAxis;
+				    json.yAxis = yAxis;
+				    json.legend = legend;
+					json.series = series;
+
+					$('#weekStatistic').highcharts(json);
+
+				},
+				error : function() {
+
+				}
+			});
+		
+
 	}
+	
 	function setSiteAdress(){
 		
 		let siteNm = $('#selectSite').val();
@@ -927,12 +954,58 @@
 
 	}
 	
+	
+
+	
 	$(document).on('click', '.highcharts-point', function(e){
 	    e.preventDefault();  
 	    console.log("클릭");
 	    
-	    console.log("클릭한 소셜 : " + "클릭한 일자 : " + "총건 : ");
+	    //selectHandler();
 	})
+	
+	function selectHandler() {
+		
+		var chart = document.getElementById('container');
+		
+		var selection = chart.getSelection();
+		
+		var message = '';
+		
+		for (var i = 0; i < selection.length; i++) {
+			var item = selection[i];
+			if (item.row != null && item.column != null) {
+			var str = data.getFormattedValue(item.row, item.column);
+			var category = data
+			.getValue(chart.getSelection()[0].row, 0)
+			var type
+			if (item.column == 1) {
+			type = "sale";
+			} else if(item.column == 2){
+			type = "Expense";
+			}else{
+			type = "Profit";
+			}
+			message += '{row:' + item.row + ',column:' + item.column
+			+ '} = ' + str + '  The Category is:' + category
+			+ ' it belongs to : ' + type + '\n';
+			} else if (item.row != null) {
+			var str = data.getFormattedValue(item.row, 0);
+			message += '{row:' + item.row
+			+ ', column:none}; value (col 0) = ' + str
+			+ '  The Category is:' + category + '\n';
+			} else if (item.column != null) {
+			var str = data.getFormattedValue(0, item.column);
+			message += '{row:none, column:' + item.column
+			+ '}; value (row 0) = ' + str
+			+ '  The Category is:' + category + '\n';
+			}
+		}
+		if (message == '') {
+		message = 'nothing';
+		}
+		alert('You selected ' + message);
+	}
 	
 </script>
 
@@ -1029,17 +1102,21 @@
 					</figure>
 				</div>
 			</div>
-			<div class="d-lg-flex align-items-start d-block">
-				<figure class="highcharts-figure">
-				  <div id="weekStatistic"></div>
-				    <p class="highcharts-description" align="right" id="weekTodayDate">
-					</p>
-				</figure>
+			<div class="d-lg-flex">
 				<figure class="highcharts-figure">
 				  <div id="webPie"></div>
+				</figure>
+				<figure class="highcharts-figure">
 				  <div id="mobilePie"></div>
 				</figure>
 			</div>
+			<figure class="highcharts-figure">
+				<div id="weekStatistic"></div>
+			</figure>
+			<h4 class="mb-0 tx-bold tx-20">
+				<p class="highcharts-description" align="right" id="weekTodayDate">
+				</p>
+			</h4>
 		</div>
 	</div>
 </div>
