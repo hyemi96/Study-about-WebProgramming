@@ -1,0 +1,302 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+
+<!-- 답변 목록 가져오기 -->
+<script type="text/javascript" language="javascript">
+	$(document).ready(function() {
+		
+		qnaList();
+		
+		$("#btnMore").click(function(){
+			var currentPage = $("#currentPage").val();
+			currentPage = parseInt( currentPage ) + 1;
+			
+			$("#currentPage").val( currentPage );
+			
+			qnaList();
+		});
+	});
+	
+	function qnaList() {
+		
+		//console.log($("#userId").val());
+			
+		var userId =$("#userId").val();
+   		var currentPage = $("#currentPage").val();
+   		var pageSize = $("#pageSize").val();
+   		var pageUnit = $("#pageUnit").val();
+   		var pageTotalCount = 0;
+
+   		var voidHTML = `<div class="card-body">질문 내역이 없습니다.</div>`;
+   		
+   		if( parseInt( currentPage ) > 1 ){
+   			var innerHTML = $("#qnaList").html();
+   		}else{
+   			var innerHTML = "";
+   			$("#qnaList").html("");
+   			pageTotalCount = 0;
+   		}
+		
+		var data ={"createdId" : userId , "currentPage" : currentPage , "pageSize" : pageSize, "pageUnit" : pageUnit};
+
+		if( data == "" ){
+   			return;
+   		}
+   		
+		//console.log(data);
+		
+		$.ajax({
+            url: "/m/ajaxQnaList.do",
+            data: data,
+            type: 'POST',
+            dataType: 'json',
+            contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+            async: false,
+            success: function(data) {
+
+                innerHTML += "";
+
+                if (  data.QnaLists !=null && data.QnaLists.length > 0) {
+					pageTotalCount = data.QnaVO.pageTotalCount;
+					
+					//console.log( "pageTotalCount ::: " + pageTotalCount );
+					
+					$("#pageTotalCount").text( pageTotalCount );
+	
+					if( pageTotalCount > 0 ){
+						for (var i = 0; i < data.QnaLists.length; i++) {
+	                		
+	                    	var className = "";
+	                    	var dispName = "";
+	                		
+	                    	//console.log(data.QnaLists[i]['replyCount']); 
+	                    	
+	    					if( parseInt( data.QnaLists[i]['replyCount'] ) == 0 ){
+	                 		
+	    						//qna-panel-title qna-1
+	                 			className = "qna-panel-title qna-1";
+	                			dispName = "진행중";
+	
+	                		}else{
+	                			//qna-panel-title qna-2
+	                			className = "qna-panel-title qna-2";
+	                			dispName = "답변완료"; 
+	
+	                		}
+	
+	                        innerHTML += `
+				                        	<div id="accordion`+ (i+1)+ `" class="card-body">
+					                            <div class="panel panel-default">
+					                                <div class="panel-top">
+					                                    <h4 class="` + className + `">
+					                                        <a class="accordion-toggle collapsed" data-parent="#accordion`+ (i+1)+ `" id="`+ (i+1)+ `" href="#qna`+ (i+1)+ `" aria-expanded="false" onClick="showClick(this.id);">
+					                                        <span class="qna-badge" >`+ dispName +`</span> 
+					                                        ` + data.QnaLists[i]['qaTitle'] + ` 
+					                                        <span class="qna-data">` + data.QnaLists[i]['createdAt'] + `</span></a>
+					                                    </h4>
+					                                </div>
+					                                <div id="qnaBody`+ (i+1)+ `" role="tabpanel" aria-expanded="false" class="qaContentsHide">
+					                                    <div class="qna-body">
+					                                        <p> ` + data.QnaLists[i]['qaContents'] + `</p>
+					                                    </div>
+							`;
+							
+							if( parseInt( data.QnaLists[i]['replyCount'] ) > 0 ){
+								
+								var subData = "";
+								subData ={"qaSeq": data.QnaLists[i]['seq'] };
+								
+		 						$.ajax({
+						            url: "/m/ajaxQnaReplyList.do",
+						            data: subData,
+						            type: 'POST',
+						            dataType: 'json',
+						            contentType: "application/x-www-form-urlencoded;charset=UTF-8",
+						            async: false,
+						            success: function( arg ) {
+						            	if (  arg.QnaReplyLists.length > 0) {
+							            	for (var j = 0; j < arg.QnaReplyLists.length; j++) {
+							            		
+								            	innerHTML += `
+						                                    <div class="panel-body">
+						                                        <p class="mb-2">` + arg.QnaReplyLists[j]['contents'] + `</p>
+						                                        <span class="qna-data">` + arg.QnaReplyLists[j]['qaReplyCreatedAt'] + `</span>
+						                                	</div>
+				           								`;
+	
+							            	}
+							            	
+						            	}
+						            },
+						            error: function() {
+			
+						            }
+								
+		 						});
+	
+							}
+							
+							innerHTML += `
+				                                </div>
+				                            </div>
+			                        	</div>
+							`;
+
+	                    } //for
+
+	                    
+						var calCount = 0;
+						calCount = parseInt( currentPage ) * parseInt( pageSize );
+						
+						//console.log( " calCount : " + calCount );
+						//console.log( " pageTotalCount : " + pageTotalCount);
+						
+						if( calCount < parseInt( pageTotalCount ) ){
+							$("#btnMore").show();
+						}
+						
+	                    $("#qnaList").html(innerHTML);
+	                    $(".qaContentsHide").hide();
+						
+					} else {
+                    	$("#qnaList").html( voidHTML );
+					}	
+                }else {
+                	$("#qnaList").html( voidHTML );
+				}
+
+            },
+            error: function() {
+                $("#qnaList").html(voidHTML);
+            }
+
+        });
+	}
+	
+
+	function showClick(id) {
+		
+		console.log("id="+ id);
+		
+		var toggleClassName = document.getElementById(id).className;
+				
+		/* $("#qnaBody"+id+"").slideToggle(300); */
+	
+		if( toggleClassName == "accordion-toggle" ){
+			
+			document.getElementById(id).className = "accordion-toggle collapsed";
+			$("#qnaBody"+id+"").hide(300);
+			//document.getElementById("qnaBody"+id+"").style.display = 'none';
+			console.log("hide" + "accordion-toggle" + " : " + id);
+
+		}else{
+			 document.getElementById(id).className = "accordion-toggle";
+			 $("#qnaBody"+id+"").show(300);
+			 //document.getElementById("qnaBody"+id+"").style.display = 'block';
+			 console.log("show" + "accordion-toggle collapsede" + " : " + id);
+		} 
+
+	}
+
+</script>
+
+
+   <!-- Page -->
+    <div class="page">
+
+        <!-- main-content opened -->
+        <div class="horizontal-content">
+            <!-- container opened -->
+            <div class="mg-x-10">
+                <!-- row -->
+                <div class="row row-xs w-100 mx-0 px-0 mg-b-10 mt-3">
+                    <div class="col-sm-12 tx-16">
+                        <!--faq-->
+                        
+                        <form:form commandName="QnaVO" id="fm" name="fm" method="post" onsubmit="javascript: return false;">
+                                <input type="hidden" id="userId" name="userId" value="<c:out value="${ssUserId}"/>" />
+                    			<!-- 페이징 관련 로직 추가 Start!!! -->
+                    			<input type="hidden" id="currentPage" name="currentPage" value="1" />
+                    			<input type="hidden" id="pageSize" name="pageSize" value="20" />
+                    			<input type="hidden" id="pageUnit" name="pageUnit" value="20" />
+                    			<!-- 페이징 관련 로직 추가 End!!! -->
+                    			
+				        </form:form>
+                        <div class="didbox" id="qnaList">
+
+                        </div>
+                        <div class="text-center mt-2" id="dispMore">
+                            <button id="btnMore" class="form-btn btn-blue-line w-100">더보기 <i class="fa fa-chevron-down"></i></button>
+                        </div>
+<!--                         <div class="didbox">
+                            <div id="accordion1" class="card-body">
+                                <div class="panel panel-default">
+                                    <div class="panel-top">
+                                        <h4 class="qna-panel-title qna-1">
+                                            <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion1" href="#qna1" aria-expanded="false"><span class="qna-badge">진행중</span> 단말기가 이상해요. <span class="qna-data">2022.04.02 13:57</span></a>
+                                        </h4>
+                                    </div>
+                                    <div id="qna1" class="panel-collapse collapse" role="tabpanel" aria-expanded="false">
+                                        <div class="qna-body">
+                                            <p>단말기 체결 시 자꾸 빨간불이 떠요.</p>
+                                        </div>
+                                        <div class="panel-body">
+                                            <p class="mb-2">안녕하세요. 하이제라 네트웍스입니다.</p>
+                                            <p class="mb-2">네이버 스마트스토어, 쿠팡에서 회원가입 후 구입가 가능합니다.</p>
+                                            <p>감사합니다.</p>
+                                            <span class="qna-data">2022.04.01 15:43</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="accordion2" class="card-body">
+                                <div class="panel panel-default">
+                                    <div class="panel-top">
+                                        <h4 class="qna-panel-title qna-2">
+                                            <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion2" href="#qna2" aria-expanded="false"><span class="qna-badge">답변완료</span> 스마트기저귀와 단말기는 어떻게 구입하나요? <span class="qna-data">2022.04.01 13:42</span></a>
+                                        </h4>
+                                    </div>
+                                    <div id="qna2" class="panel-collapse collapse" role="tabpanel" aria-expanded="false">
+                                        <div class="qna-body">
+                                            <p>스마트기저귀와 단말기는 어떻게 구입하나요? 빠른 답변 바랍니다.</p>
+                                        </div>
+                                        <div class="panel-body">
+                                            <p class="mb-2">안녕하세요. 하이제라 네트웍스입니다.</p>
+                                            <p class="mb-2">네이버 스마트스토어, 쿠팡에서 회원가입 후 구입가 가능합니다.</p>
+                                            <p>감사합니다.</p>
+                                            <span class="qna-data">2022.04.01 13:42</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="accordion3" class="card-body">
+                                <div class="panel panel-default">
+                                    <div class="panel-top">
+                                        <h4 class="qna-panel-title qna-2">
+                                            <a class="accordion-toggle collapsed" data-toggle="collapse" data-parent="#accordion3" href="#qna3" aria-expanded="false"><span class="qna-badge">답변완료</span> 기저귀 종류는 무엇이 있나요? <span class="qna-data">2022.03.21 15:12</span></a>
+                                        </h4>
+                                    </div>
+                                    <div id="qna3" class="panel-collapse collapse" role="tabpanel" aria-expanded="false">
+                                        <div class="qna-body">
+                                            <p>속 기저귀만 있나요? 겉 기저귀는 뭘 써야 하나요?</p>
+                                        </div>
+                                        <div class="panel-body">
+                                            <p class="mb-2">안녕하세요. 하이제라 네트웍스입니다.</p>
+                                            <p class="mb-2">현재는 속 기저귀만 판매하며, 하리제라 스마트돌봄 라운드형과 타사의 겉 기저귀와 함께 사용하시면 됩니다.</p>
+                                            <p>감사합니다.</p>
+                                            <span class="qna-data">2022.03.21 17:00</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> -->
+                        <!--faq closed-->
+
+                    </div>
+                </div>
+                <!-- row closed -->
+            </div>
+        </div>
+        <!-- Container closed -->
+
+    </div>
+    <!-- End Page -->
