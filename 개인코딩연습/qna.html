@@ -41,9 +41,7 @@
 		if( data == "" ){
    			return;
    		}
-   		
-		//console.log(data);
-		
+	
 		$.ajax({
             url: "/m/ajaxQnaList.do",
             data: data,
@@ -84,17 +82,17 @@
 	                		}
 	
 	                        innerHTML += `
-				                        	<div id="accordion`+ (i+1)+ `" class="card-body">
+				                        	<div id="accordion`+ data.QnaLists[i]['seq']+ `" class="card-body">
 					                            <div class="panel panel-default">
 					                                <div class="panel-top">
 					                                    <h4 class="` + className + `">
-					                                        <a class="accordion-toggle collapsed" data-parent="#accordion`+ (i+1)+ `" id="`+ (i+1)+ `" href="#qna`+ (i+1)+ `" aria-expanded="false" onClick="showClick(this.id);">
+					                                        <a class="accordion-toggle collapsed" data-parent="#accordion`+ data.QnaLists[i]['seq']+ `" id="`+data.QnaLists[i]['seq']+ `" href="#qna`+ data.QnaLists[i]['seq']+ `" aria-expanded="false" onClick="showClick(this.id);">
 					                                        <span class="qna-badge" >`+ dispName +`</span> 
 					                                        ` + data.QnaLists[i]['qaTitle'] + ` 
 					                                        <span class="qna-data">` + data.QnaLists[i]['createdAt'] + `</span></a>
 					                                    </h4>
 					                                </div>
-					                                <div id="qnaBody`+ (i+1)+ `" role="tabpanel" aria-expanded="false" class="qaContentsHide">
+					                                <div id="qnaBody`+ data.QnaLists[i]['seq']+ `" role="tabpanel" aria-expanded="false" class="qaContentsHide">
 					                                    <div class="qna-body">
 					                                        <p> ` + data.QnaLists[i]['qaContents'] + `</p>
 					                                    </div>
@@ -122,7 +120,7 @@
 						                                        <span class="qna-data">` + arg.QnaReplyLists[j]['qaReplyCreatedAt'] + `</span>
 						                                	</div>
 				           								`;
-	
+
 							            	}
 							            	
 						            	}
@@ -139,11 +137,10 @@
 				                                </div>
 				                            </div>
 			                        	</div>
-							`;
+									`;
 
 	                    } //for
 
-	                    
 						var calCount = 0;
 						calCount = parseInt( currentPage ) * parseInt( pageSize );
 						
@@ -156,6 +153,9 @@
 						
 	                    $("#qnaList").html(innerHTML);
 	                    $(".qaContentsHide").hide();
+	                    
+	                    
+	                    //만일 테이블이 이미 생성되어서 있디면 legth를 구해서 id를 넣어준다??
 						
 					} else {
                     	$("#qnaList").html( voidHTML );
@@ -178,23 +178,18 @@
 		console.log("id="+ id);
 		
 		var toggleClassName = document.getElementById(id).className;
-				
-		/* $("#qnaBody"+id+"").slideToggle(300); */
 	
 		if( toggleClassName == "accordion-toggle" ){
-			
 			document.getElementById(id).className = "accordion-toggle collapsed";
-			$("#qnaBody"+id+"").hide(300);
-			//document.getElementById("qnaBody"+id+"").style.display = 'none';
+			$("#qnaBody"+id).hide(300);
 			console.log("hide" + "accordion-toggle" + " : " + id);
 
 		}else{
-			 document.getElementById(id).className = "accordion-toggle";
-			 $("#qnaBody"+id+"").show(300);
-			 //document.getElementById("qnaBody"+id+"").style.display = 'block';
-			 console.log("show" + "accordion-toggle collapsede" + " : " + id);
-		} 
-
+			document.getElementById(id).className = "accordion-toggle";
+			$("#qnaBody"+id+"").show(300);
+			console.log("show" + "accordion-toggle collapsede" + " : " + id);
+		}
+		
 	}
 
 </script>
