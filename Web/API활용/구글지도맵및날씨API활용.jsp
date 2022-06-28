@@ -13,7 +13,7 @@
 	font-weight:100
 }
 </style>
-<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=AIzaSyDmv67Z6uFJP5JD0qz1-xsLMOcV2oaiSr8" ></script>
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?key=A~~~~~~~~8" ></script>
 <script type="text/javascript">
 $(document).ready(function() { 
 		
@@ -197,7 +197,7 @@ var lat = $("#lat").val();
 var lon = $("#lon").val();
 
 
-var apiURI ="http://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=585ebfe16625d401b352769155824f3f";
+var apiURI ="http://api.openweathermap.org/data/2.5/onecall?lat="+lat+"&lon="+lon+"&appid=5~~~~~~~~~~~~~f";
 	$.ajax({
 	    url: apiURI,
 	    dataType: "json",
@@ -297,7 +297,7 @@ var lat = $("#lat").val();
 var lon = $("#lon").val();
 
 
-var apiURI ="http://api.openweathermap.org/data/2.5/air_pollution?lat="+lat+"&lon="+lon+"&appid=585ebfe16625d401b352769155824f3f";
+var apiURI ="http://api.openweathermap.org/data/2.5/air_pollution?lat="+lat+"&lon="+lon+"&appid=58~~~~~~~~~~~~~~~~~~f3f";
 	$.ajax({
 	    url: apiURI,
 	    dataType: "json",
