@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="HmNoticeMapper">
+
+<!-- 	<select id="selectNoticeList" resultType="co.kr.wdt.hm.notice.vo.HmNoticeVo">
+		<![CDATA[
+			SELECT
+				A.NOTICE_SEQ
+				, A.NOTICE_WRITER_ID
+				, A.NOTICE_SUBJECT
+				, A.NOTICE_CONTENTS
+				, A.NOTICE_REG_ID
+				, TO_CHAR(A.NOTICE_REG_DT, 'YYYY-MM-DD') AS NOTICE_REG_DT
+				, A.NOTICE_MOD_ID
+				, A.NOTICE_MOD_DT
+				, A.NOTICE_DEL_ID
+				, A.NOTICE_DEL_DT
+				, A.NOTICE_VIEWS
+				, A.USE_YN
+			FROM TB_NOTICE A WHERE 1=1
+			AND A.USE_YN = 'Y'
+			AND ROWNUM < 10
+			ORDER BY NOTICE_SEQ ASC
+		]]>
+
+		/* co.kr.wdt.hm.notice.dao.NoticeDao.selectNoticeList */
+	</select> -->
+
+	<select id="selectNoticeList" parameterType="co.kr.wdt.hm.notice.vo.HmNoticeVo" resultType="co.kr.wdt.hm.notice.vo.HmNoticeVo" >
+
+	SELECT
+		S.NOTICE_SEQ
+		, S.NOTICE_WRITER_ID
+		, S.NOTICE_SUBJECT
+		, S.NOTICE_CONTENTS
+		, S.NOTICE_REG_ID
+		, TO_CHAR(A.NOTICE_REG_DT, 'YYYY-MM-DD') AS NOTICE_REG_DT
+		, S.NOTICE_MOD_ID
+		, S.NOTICE_MOD_DT
+		, S.NOTICE_DEL_ID
+		, S.NOTICE_DEL_DT
+		, S.NOTICE_VIEWS
+		, S.USE_YN
+	FROM
+		(
+			SELECT
+					A.NOTICE_SEQ
+					, A.NOTICE_WRITER_ID
+					, A.NOTICE_SUBJECT
+					, A.NOTICE_CONTENTS
+					, A.NOTICE_REG_ID
+					, A.NOTICE_REG_DT
+					, A.NOTICE_MOD_ID
+					, A.NOTICE_MOD_DT
+					, A.NOTICE_DEL_ID
+					, A.NOTICE_DEL_DT
+					, A.NOTICE_VIEWS
+					, A.USE_YN
+					FROM TB_NOTICE A WHERE 1=1
+					AND A.USE_YN ='Y'
+					<if test="search!=null and search !='' " >
+						AND (A.NOTICE_SUBJECT LIKE '%' || #{search} || '%' OR A.NOTICE_CONTENT LIKE '%' ||#{search}||'%')
+					</if>
+					ORDER BY NOTICE_SEQ DESC
+		)
+
+
+	/* co.kr.wdt.hm.notice.dao.NoticeDao.selectNoticeList */
+	</select>
+
+</mapper>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="PhoneCertificationMapper">
+
+	<delete id="deleteTempKey" parameterType="String">
+		DELETE
+			FROM CERTIFICATION_TEMPKEY
+		WHERE PHONE = #{value }
+
+		/* kr.co.wdt.common.util.dao.deleteTempKey */
+	</delete>
+
+	<select id="getTempKey" parameterType="String" resultType="String">
+		SELECT TEMP_KEY
+			FROM CERTIFICATION_TEMPKEY
+		WHERE PHONE = #{value }
+
+		/* kr.co.wdt.common.util.dao.getTempKey */
+	</select>
+
+	<insert id="insertCertificationKey" parameterType="HashMap">
+		INSERT INTO CERTIFICATION_TEMPKEY
+			(
+				PHONE
+				, TEMP_KEY
+			)VALUES(
+				#{phone }
+				, #{tempKey }
+			)
+
+		/* kr.co.wdt.common.util.dao.insertCertificationKey */
+	</insert>
+</mapper>
