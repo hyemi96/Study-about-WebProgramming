@@ -233,14 +233,14 @@ function imgToggle() {
 
 <div class="2번-text">
 2. 회원목록의 내용을 추가하고 목록을 삭제하는 기능 구현
-"정병훈,최인회,이수진" => "정병훈,최인회" 2개로 줄어들게
-"정병훈,최인회,이수진" => "정병훈,최인회,이수진,김민정" 4개로 늘어나게
+"김영일,김영이,김영삼" => "김영일,김영이" 2개로 줄어들게
+"김영일,김영이,김영삼" => "김영일,김영이,김영삼,김영사" 4개로 늘어나게
 </div>
 <div class="2번">
 회원목록<select id="selectMember">
-	<option value="정병훈">정병훈</option>
-	<option value="최인희">최인희</option>
-	<option value="이수진" selected>이수진</option>
+	<option value="김영일">김영일</option>
+	<option value="김영이">김영이</option>
+	<option value="김영삼" selected></option>
 </select>
 <input type="text" id="list" name="list" style="width: 250px;" placeholder='추가 할 회원이름을 입력해주세요.'/>
 <button type="button" id="insert" name="insert" onclick="selectInsert();" >추가</button>
