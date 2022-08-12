@@ -1,0 +1,180 @@
+.content-box {
+	font-size: small;
+	font-weight: bold;
+	color: gray;
+	border: 1px solid gray;
+	border-radius: 20px;
+	width: 970px;
+	height: 600px;
+	margin: 20px;
+}
+
+.content-title {
+	display: inline-block;
+	font-size: 28px;
+	padding: 20px 0 10px 420px;
+	text-align: center;
+	clear: left;
+	margin-bottom: 30px;
+}
+
+.listbox {
+	width: 950px;
+	height: 300px;
+	margin-left: 10px;
+	margin-top: 10px;
+	overflow: scroll;
+}
+
+.listbox::-webkit-scrollbar {
+	display: none;
+}
+
+#notice-detail {
+	width: 100%;
+	height: 100%;
+}
+
+#notice-detail th {
+	background-color: #26687C;
+	color: #fff;
+	text-align: left;
+}
+
+#notice-detail tr:nth-child(odd) {
+	background-color: #f2f2f2;
+}
+
+.paging-box {
+	text-align: center;
+	font-size: 15px;
+	margin-top: 15px;
+	float: left;
+}
+
+.order-button {
+	margin-top: 5px;
+	margin-right: 15px;
+	float: right;
+	margin-bottom: 10px;
+}
+
+.bottom-button {
+	border: 0px;
+	outline: none;
+	height: 40px;
+	width: 80px;
+	font-size: 16px;
+	color: white
+}
+
+#notice-list {
+	background-color: #FFC2B4;
+	float: left;
+	magin-left: 15px;
+}
+
+#notice-edit {
+	background-color: #26687C;
+}
+
+#notice-delete {
+	background-color: #194350;
+}
+
+.reply-box {
+	margin-left: 15px;
+	height: 35px;
+	width: 835px;
+	font-size: 14px;
+}
+
+#reply {
+	background-color: #c0c0c0;
+}
+
+.Subject-Title {
+	font-size: 15px;
+	text-align: center;
+}
+
+.hash-tag {
+	margin-left: 15px;
+	color: #0000FF;
+	text-decoration: underline;
+}
+
+.list-button {
+	margin-top: 5px;
+	margin-left: 15px;
+	float: left;
+	margin-bottom: 10px;
+}
+
+.scroll-bar {
+	width: 97.5%;
+	height: 610px;
+	overflow: auto;
+}
+
+.like-section {
+	margin-top: 5px;
+	margin-left: 15px;
+	float: left;
+	margin-bottom: 10px;
+}
+
+#like-button {
+	background-color: #ffffff;
+	border: 0px;
+	outline: none;
+	cursor: pointer;
+}
+
+#share-button {
+	background-color: #ffffff;
+	border: 0px;
+	outline: none;
+	cursor: pointer;
+	float: right;
+}
+
+.share-section {
+	margin-top: 5px;
+	margin-right: 15px;
+	float: right;
+	margin-bottom: 10px;
+}
+
+.share-tag {
+	height: 22px;
+	width: 22px;
+}
+
+textarea {
+	display: block;
+	width: 835px;
+	resize: none;
+	float: left;
+	margin-bottom: 7px;
+}
+
+.reply-button {
+	margin-right: 15px;
+	float: right;
+}
+
+.direction-tag {
+	margin-left: 15px;
+	color: #000000;
+	text-decoration: none;
+}
+
+.current-page {
+	text-style: bold;
+	font-weight: 800;
+}
+
+.category {
+	background-color: #ffffff;
+}

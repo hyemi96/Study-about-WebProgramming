@@ -1,0 +1,85 @@
+.findIdPw {
+	color: #9e9e9e;
+	text-decoration: none;
+	font-size: 12px;
+	text-align: right;
+}
+
+.kakaoImg {
+	width : 310px;
+	margin-top: 10px;
+	text-align: center;
+}
+
+.login-btn {
+	margin-top: 13px;
+	width: 310px;
+	text-align: center;
+	height: 38px;
+	color: #eaf3f2;
+	background-color: #31ac8e;
+	font-size: x-large;
+	font-weight: bold;
+	border: 0;
+	outline: 0;
+	font-family: 'Brush Script MT';
+}
+
+.login_text {
+	width: 310px;
+	text-align: center;
+	font-size: xxx-large;
+	font-family: 'Brush Script MT';
+}
+
+.or-login {
+	font-size: small;
+	text-align: center;
+}
+
+.group-input {
+	margin-top: 5px;
+}
+
+#userId {
+	margin-top: 5px;
+    width: 300px;
+    height: 25px;
+}
+
+#userPw {
+	margin-top: 5px;
+	width: 300px;
+	height: 25px;
+}
+
+.group-input-check {
+	text-align: right;
+}
+
+.switch-login {
+	text-align: center;
+}
+
+.group-login {
+	font-size: xx-small;
+}
+
+.txt_copyright {
+	position: absolute;
+	text-align: center;
+	bottom: 10;
+	width: 100%;
+}
+
+.service_info {
+	text-align: center;
+	padding: 20px 0 60px;
+	border-top: 1px solid #e5e5e5;
+	font-size: 16px;
+    line-height: 1.5;
+    font-family: NotoSans-Regular,AppleSDGothicNeo-Regular,"맑은 고딕",Malgun Gothic,"돋움",dotum,sans-serif;
+    color: #7c7c7c;
+    letter-spacing: -0.03em;
+    word-wrap: break-word;
+}

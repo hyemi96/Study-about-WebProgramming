@@ -1,0 +1,176 @@
+a {
+	text-decoration:none;
+	color: white;
+}
+.container {
+	border: none;
+	width: 1200px;
+	margin: auto;
+}
+
+header {
+	border: none;
+	height: 80px;
+	background-color: #300000;
+}
+
+header div {
+	border: none;
+	color: #2A120A;
+	font-width: bold;
+	letter-spacing: 1px;
+}
+
+header div.menu-logo-first {
+	font-size: 26px;
+	font-variant: small-caps;
+	float: left;
+	position: relative;
+	top: 8px;
+	left: 30px;
+	width: 170px;
+	color: white;
+}
+
+header div.menu-logo-second {
+	font-size: 26px;
+	font-variant: small-caps;
+	position: relative;
+	left: 30px;
+	clear: both;
+}
+
+header .menu-home {
+	font-size: 22px;
+	float: left;
+	position: relative;
+	top: 25px;
+	left: 130px;
+	width: 650px;
+}
+
+header .menu-login {
+	font-size: 22px;
+	padding: 5px 0 25px 1000px;
+	float: right;
+	position: absolute;
+	top: 30px;
+}
+
+header div.menu-logout {
+	font-size: 22px;
+	float: left;
+	position: relative;
+	top: 30px;
+	width: 180px;
+}
+
+header div.menu-signup {
+	font-size: 22px;
+	float: left;
+	position: relative;
+	top: 30px;
+	width: 200px;
+}
+
+header div.menu-userId {
+	font-size: 22px;
+	float: left;
+	position: relative;
+	top: 30px;
+	width: 180px;
+}
+
+section {
+	color: white;
+}
+
+section.inner-first {
+	width: 200px;
+	height: 720px;
+	float: left;
+	background-color: #1E0000;
+}
+
+section.inner-second {
+	width: 1000px;
+	height: 620px;
+	float: left;
+}
+
+div.left-menu-top {
+	margin: 20px 0 0 0;
+}
+
+ul.left-menu-up li {
+	list-style: none;
+	margin: 20px 0 10px 0;
+}
+
+ul.left-menu-down li {
+	list-style: disc;
+	margin: 0px;
+}
+
+div.left-menu-bottom {
+	margin: 380px 0px 10px 0px;
+}
+
+section.inner-second {
+	border: none;
+	width: 1000px;
+	height: 650px;
+	background-color: #f5f1ee;
+	background-image: url("/images/hm/cafe22.jpg");
+	background-position: center center;
+	background-repeat: no-repeat;
+	background-size: cover;
+	padding: 0;
+}
+
+.content-box {
+	font-size: small;
+	font-weight: bold;
+	color: gray;
+	border: 1px solid gray;
+	border-radius: 20px;
+	width: 970px;
+	height: 190px;
+	margin: 20px;
+}
+
+.content-title {
+	font-size: 16px;
+	padding: 20px 0 10px 20px;
+	float: left;
+}
+
+.content-more {
+	font-size: 16px;
+	padding: 20px 0 10px 800px;
+	float: left;
+}
+
+.content-sign {
+	color: #2A120A;
+	font-size: 12px;
+	padding: 24px 0 10px 5px;
+	float: left;
+}
+
+hr {
+	width: 940px;
+}
+
+footer {
+	border: none;
+	width: 1000px;
+	height: 70px;
+	float: right;
+	box-sizing: border-box;
+	background-color: #300000;
+	line-height: 80px;
+	font-size: 8px;
+	color: dimgrey;
+	text-align: center;
+}
