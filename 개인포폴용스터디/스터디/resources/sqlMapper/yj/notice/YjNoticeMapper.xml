@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="YjNoticeMapper">
+
+	<select id="selectNoticeList" parameterType="co.kr.wdt.yj.notice.vo.YjNoticeVo" resultType="co.kr.wdt.yj.notice.vo.YjNoticeVo">
+		SELECT S.NOTICE_SEQ
+				, S.NOTICE_WRITER_ID
+				, S.NOTICE_SUBJECT
+				, S.NOTICE_CONTENTS
+				, S.NOTICE_REG_ID
+				, TO_CHAR(S.NOTICE_REG_DT, 'YYYY-MM-DD') AS NOTICE_REG_DT
+				, S.NOTICE_MOD_ID
+				, S.NOTICE_MOD_DT
+				, S.NOTICE_DEL_ID
+				, S.NOTICE_DEL_DT
+				, S.NOTICE_VIEWS
+				, S.USE_YN
+		FROM
+			(
+				SELECT ROWNUM RNUM, T.*
+				FROM (
+						SELECT
+							A.NOTICE_SEQ
+							, A.NOTICE_WRITER_ID
+							, A.NOTICE_SUBJECT
+							, A.NOTICE_CONTENTS
+							, A.NOTICE_REG_ID
+							, A.NOTICE_REG_DT
+							, A.NOTICE_MOD_ID
+							, A.NOTICE_MOD_DT
+							, A.NOTICE_DEL_ID
+							, A.NOTICE_DEL_DT
+							, A.NOTICE_VIEWS
+							, A.USE_YN
+							FROM TB_NOTICE A WHERE 1=1
+							AND A.USE_YN = 'Y'
+							<if test="search != null and search != '' ">
+								AND (A.NOTICE_SUBJECT LIKE '%'||#{search }||'%' OR A.NOTICE_CONTENTS LIKE '%'||#{search }||'%')
+							</if>
+							ORDER BY
+								<if test="orderType == 'date'">
+									A.NOTICE_REG_DT,
+								</if>
+								<if test="orderType == 'title'">
+									A.NOTICE_SUBJECT,
+								</if>
+								<if test="orderType == 'view'">
+									 A.NOTICE_VIEWS,
+								</if>
+							A.NOTICE_SEQ DESC
+					) T
+			) S
+		WHERE S.RNUM BETWEEN #{startRowNo } AND #{endRowNo }
+
+		/* co.kr.wdt.yj.notice.dao.NoticeDao.selectNoticeList */
+	</select>
+
+	<select id="selectNoticeTotalCnt" resultType="int">
+		SELECT COUNT(A.NOTICE_SEQ) AS NOTICE_SEQ
+		FROM TB_NOTICE A WHERE 1=1
+		AND A.USE_YN = 'Y'
+		<if test="search != null and search != '' ">
+			AND (A.NOTICE_SUBJECT LIKE '%'||#{search }||'%' OR A.NOTICE_CONTENTS LIKE '%'||#{search }||'%')
+		</if>
+
+		/* co.kr.wdt.yj.notice.dao.NoticeDao.selectNoticeTotalCnt */
+	</select>
+
+</mapper>

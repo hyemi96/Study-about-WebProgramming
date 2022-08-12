@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="co.kr.wdt.st.user.dao">
+	
+	<select id="selectUserLoginCheck" parameterType="co.kr.wdt.st.login.vo.StLoginVo" resultType="co.kr.wdt.st.login.vo.StLoginVo">
+		SELECT	USER_ID
+				, USER_PW
+				, USER_NM
+				, USER_EMAIL
+				, USER_PHONE
+				, ADDRESS_NUM
+				, ADDRESS1
+				, ADDRESS2
+				, REG_DT
+				, IP_ADDR
+			FROM TEST_USER
+		WHERE USER_ID = #{userId }
+
+		/* co.kr.wdt.st.login.dao.stLoginDao.selectUserLoginCheck */
+	</select>
+
+
+</mapper>

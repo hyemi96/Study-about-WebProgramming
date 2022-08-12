@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="co.kr.wdt.st.user.dao">
+	<!-- id중복체크 -->	
+	<select id ="idChk" resultType="int" parameterType="String">
+		SELECT COUNT(*) FROM TEST_USER WHERE USER_ID = #{userId}
+	</select>
+
+	<select id ="emailChk" resultType="int" parameterType="String">
+		SELECT COUNT(*) FROM TEST_USER WHERE USER_EMAIL = #{email}
+	</select>
+
+	<!-- 회원가입 -->
+	<insert id="userCreate" parameterType="co.kr.wdt.st.user.vo.StUserVo">
+	INSERT INTO TEST_USER(USER_ID, USER_PW, USER_NM, USER_PHONE, REG_DT, ADDRESS_NUM, ADDRESS1, ADDRESS2, USER_EMAIL)
+	VALUES (#{userId}, #{userPw}, #{userNm},#{userPhone},to_char(sysdate,'yyyy-mm-dd hh24:mi:ss'), #{address}, #{address2}, #{address3}, #{userEmail})
+
+	</insert>
+
+</mapper>

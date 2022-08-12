@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="YjUserMapper">
+
+	<sql id="selectUserFirst">
+		SELECT USER_ID
+	</sql>
+	<sql id="selectUserWhere">
+		WHERE USER_ID = #{userId }
+	</sql>
+
+
+	<select id="createIdCheck" parameterType="co.kr.wdt.yj.user.vo.YjUserVo" resultType="co.kr.wdt.yj.user.vo.YjUserVo">
+		<include refid="selectUserFirst" />
+			FROM TEST_USER
+		<include refid="selectUserWhere" />
+
+		/* co.kr.wdt.yj.user.dao.YjUserDao.createIdCheck */
+	</select>
+
+	<select id="createEmailCheck" parameterType="co.kr.wdt.yj.user.vo.YjUserVo" resultType="co.kr.wdt.yj.user.vo.YjUserVo">
+		SELECT USER_EMAIL
+			FROM TEST_USER
+		WHERE USER_EMAIL = #{userEmail }
+
+		/* co.kr.wdt.yj.user.dao.YjUserDao.createEmailCheck */
+	</select>
+
+	<insert id="userCreateSuccess" parameterType="co.kr.wdt.yj.user.vo.YjUserVo">
+		<![CDATA[
+			INSERT INTO TEST_USER
+				(
+					USER_ID
+					, USER_PW
+					, USER_NM
+					, USER_EMAIL
+					, USER_PHONE
+					, ADDRESS_NUM
+					, ADDRESS1
+					, ADDRESS2
+					, REG_DT
+					, IP_ADDR
+				) VALUES (
+					#{userId}
+					, #{userPw}
+					, #{userNm}
+					, #{userEmail}
+					, #{userPhone}
+					, #{addressNum}
+					, #{address1}
+					, #{address2}
+					, TO_CHAR(SYSDATE, 'YYYY-MM-DD')
+					, #{ipAddr}
+				)
+		]]>
+
+		/* co.kr.wdt.yj.user.dao.YjUserDao.userCreateSuccess */
+	</insert>
+
+</mapper>

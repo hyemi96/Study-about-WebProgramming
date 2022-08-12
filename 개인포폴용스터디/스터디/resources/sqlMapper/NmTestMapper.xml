@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="NmTestMapper">
+
+	<insert id="insertMberSbscrb" parameterType="co.kr.wdt.nm.vo.NmVo">
+		<![CDATA[
+		INSERT INTO TEST_USER
+			(
+				USER_ID
+				, USER_PW
+				, USER_NM
+				, USER_PHONE
+				, REG_DT
+				, ADDRESS_NUM
+				, ADDRESS1
+				, ADDRESS2
+				, USER_EMAIL
+			) VALUES (
+				#{userId}
+				, #{userPw}
+				, #{userNm}
+				, #{userPhone}
+				, TO_CHAR(SYSDATE, 'YYYY-MM-DD HH24:MI:SS')
+				, #{addressNum}
+				, #{address1}
+				, #{address2}
+				, #{userEmail}
+			)
+		]]>
+	</insert>
+</mapper>
+
