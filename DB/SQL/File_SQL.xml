@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.uhygeramgr.file.service.impl.FileServiceDAO">
+
+	<select id="insertFile" parameterType="FileVO" resultType="egovMap">
+		/** insertFile ::: 파일을 DB에 저장한다. seq 자동증가키*/
+		<![CDATA[ 
+		INSERT INTO HYGERA.DBO.FILE_MST_T ( 
+			FILE_NM
+			,FILE_TITLE
+			,FILE_PATH 
+			,FILE_SIZE 
+			,CREATED_AT
+			,CREATED_ID
+		) VALUES (
+			#{fileNm} 
+			,#{fileTitle}
+			,#{filePath}
+			,#{fileSize}
+			,getdate()
+			,'' 
+		) 
+		 ]]>
+		
+	</select>
+ 	<select id="selectFileSeq" parameterType="FileVO" resultType="int">
+		/** selectFileSeq ::: file_id 가져오기.*/
+		<![CDATA[
+		SELECT 
+			 A.SEQ AS seq
+			FROM HYGERA.DBO.FILE_MST_T A
+		WHERE 1 = 1
+		]]>
+		<if test="fileTitle != null and !fileTitle.equals('')">
+			AND A.FILE_TITLE = #{fileTitle}
+		</if>
+		
+	</select>
+	<select id="selectFilePath" parameterType="FileVO" resultType="java.lang.String">
+		/** selectFilePath ::: file 주소 가져오기.*/
+			<![CDATA[
+		SELECT 
+			A.FILE_PATH AS filePath
+			FROM HYGERA.DBO.FILE_MST_T A
+		WHERE 1 = 1
+		]]>
+		<if test="fileId != null and !fileId.equals('')">
+			AND A.SEQ = #{fileId}
+		</if>
+		
+	</select>
+	<delete id="fileDelete" parameterType="FileVO" >
+		/** fileDelete ::: 파일을 단건 삭제한다.*/
+		<![CDATA[
+			DELETE FROM HYGERA.DBO.FILE_MST_T
+			WHERE SEQ = #{seq}
+		]]>	
+		
+	</delete>
+</mapper>
