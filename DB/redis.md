@@ -100,3 +100,7 @@ Redis 사용에 주의할 점으로는
  
 
 이 외에도 Master-Slave 형식의 데이터 이중화 구조에 대한 Redis Replication, 분산 처리를 위한 Redis cluster, 장애 복구 시스템 Redis Sentinel, Redis Topology, Redis Sharding, Redis Failover 등의 Redis를 더 효율적으로 사용하기 위한 개념들이 존재합니다. 
+
+
+
+*출처 : https://wildeveloperetrain.tistory.com/21
