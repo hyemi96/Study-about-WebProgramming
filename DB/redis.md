@@ -32,6 +32,8 @@ Redis에 대해서 더 자세하게 알아보기 전 캐시 서버(Cache Server)
 
 같은 요청이 여러 번 들어오는 경우 매번 데이터 베이스를 거치는 것이 아니라 캐시 서버에서 첫 번째 요청 이후 저장된 결괏값을 바로 내려주기 때문에 DB의 부하를 줄이고 서비스의 속도도 느려지지 않는 장점이 있습니다.
 
+
+
   
 
 캐시 서버는 Look aside cache 패턴과 Write Back 패턴이 존재합니다.
@@ -107,3 +109,7 @@ Redis 사용에 주의할 점으로는
 
 
 *출처 : https://wildeveloperetrain.tistory.com/21
+
+
+
+dddd
