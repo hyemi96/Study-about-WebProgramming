@@ -7,6 +7,7 @@ Redis란?
 * db-engines.com 에서 key, value 저장소 중 가장 순위가 높습니다.
 
  
+ 
 
 Redis에 대해서 더 자세하게 알아보기 전 캐시 서버(Cache Server)에 대해서,
  
