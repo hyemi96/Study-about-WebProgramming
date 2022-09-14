@@ -1,7 +1,7 @@
 https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fblog.kakaocdn.net%2Fdn%2Fb1MDeh%2Fbtrb1bXhzRh%2FQ12Yck9ram1Rs09pXH7qL0%2Fimg.png
 
 
-Redis란?
+## Redis란?
  - Key, Value 구조의 비정형 데이터를 저장하고 관리하기 위한 오픈 소스 기반의 비관계형 데이터 베이스 관리 시스템 (DBMS)입니다.
    데이터베이스, 캐시, 메세지 브로커로 사용되며 인메모리 데이터 구조를 가진 저장소입니다.
 
@@ -28,13 +28,12 @@ Redis에 대해서 더 자세하게 알아보기 전 캐시 서버(Cache Server)
 
 
 
+## 
+
 캐시는 한번 읽어온 데이터를 임의의 공간에 저장하여 다음에 읽을 때는 빠르게 결괏값을 받을 수 있도록 도와주는 공간입니다.
 
 같은 요청이 여러 번 들어오는 경우 매번 데이터 베이스를 거치는 것이 아니라 캐시 서버에서 첫 번째 요청 이후 저장된 결괏값을 바로 내려주기 때문에 DB의 부하를 줄이고 서비스의 속도도 느려지지 않는 장점이 있습니다.
 
-
-
-  
 
 캐시 서버는 Look aside cache 패턴과 Write Back 패턴이 존재합니다.
 
@@ -72,7 +71,7 @@ Redis에 대해서 더 자세하게 알아보기 전 캐시 서버(Cache Server)
 
  
 
-본격적인 Redis의 특징,
+## Redis의 특징
  
 
 Key, Value 구조이기 때문에 쿼리를 사용할 필요가 없습니다.
