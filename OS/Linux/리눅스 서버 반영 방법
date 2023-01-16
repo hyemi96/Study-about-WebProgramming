@@ -1,0 +1,81 @@
+리눅스 툴 mobaXterm 터미널에들어가서
+시스템 계정 로그인 
+
+마스터권한이 없다 라는 에러가 뜨면
+cd
+su root 치면 권한 root로 체인지 된다.
+
+//터마널에서 서버통반영때 서버재시작및 정지 시키는 법
+Pise 에 들어가면 소스랑 엔진(tomcat)폴더가 각각 있고 :idk자바로된거라공부필요
+거기 tomcat 폴더밑에 tomcat00/bin/startup.sh랑 shutdown.sh가 있음
+:서버 실행하고 중지랑같은의미
+:이 경우 통으로 서버 반영을 할때 쓰는 명령어
+
+먼저 셧다운을 시켜서 서버를 중지 시킨후 작업후 다 끝나면 서버재시작으로 스타트업 명령어를 시킨다.
+
+예시)
+root@dev:/home/0000# cd /
+root@dev:/# cd /pise/tomcat/tommgr/bin/
+root@dev:/pise/tomcat/tommgr/bin# ls
+bootstrap.jar  catalina-tasks.xml  commons-daemon.jar            [configtest.sh](http://configtest.sh/)  [digest.sh](http://digest.sh/)            setclasspath.bat  [shutdown.sh](http://shutdown.sh/)  tomcat-juli.jar       [tool-wrapper.sh](http://tool-wrapper.sh/)
+catalina.bat   ciphers.bat         commons-daemon-native.tar.gz  [daemon.sh](http://daemon.sh/)      hs_err_pid24019.log  [setclasspath.sh](http://setclasspath.sh/)   startup.bat  tomcat-native.tar.gz  version.bat
+[catalina.sh](http://catalina.sh/)    [ciphers.sh](http://ciphers.sh/)          configtest.bat                digest.bat     hs_err_pid32567.log  shutdown.bat      [startup.sh](http://startup.sh/)   tool-wrapper.bat      [version.sh](http://version.sh/)
+root@dev:/pise/tomcat/tommgr/bin# ./startup.sh - - -명령어
+Archive:  /pise//www//mgr-1.0.0.war
+replace /pise//www//META-INF/MANIFEST.MF? [y]es, [n]o, [A]ll, [N]one, [r]ename: y
+inflating: /pise//www/mgr/META-INF/MANIFEST.MF
+replace /pise//www/mgr/html/admin-dashbd.html? [y]es, [n]o, [A]ll, [N]one, [r]ename: A - - - 모든걸 덮어씌어서 재시작해버린거임.
+
+//war파일 만들기
+이클립스에서 Run as > maven build…
+Goals : package 입력 후 > Run  : 패키지 통으로 묶어 작업하겠다는 의미
+
+이렇게 메이븐 빌드하면 이클립스내에서 테스트를 하고 통과가 되어야 배포가 된다.
+
+//배포가 성공하고 나면
+워크패이스에 taget폴더에 묶인 war파일이 생성된다. ->class 파일은 기계어(컴퓨터언어)로 변경되어진다.
+이때 그 컴퓨터 언어 파일을 보기위한 툴 : id-qui
+
+//War 파일을 풀때는 구글 검색을 통해 공부해 푼다.
+: 카피해서 백업 명령어
+: 이름 바꿔서 백업하기
+: 압축해체하는 명령어
+
+//반영 확인 방법은
+/# ls
+/# cd logs
+/ logs# cd 로그할프로젝트이름
+/ tail -f 명령어도 있음 검색해볼것
+
+//부분 반영방법
+소스있는데에 가서 내가 바꿔야할 거의 위치로가서 (하기전에 백업: 바탕화면에 이름변경후에)
+War에 있는 파일을 바꿔야할 위치인 moxterm에 드래그해서 덮어씌운다.
+
+//권한차이로 인한 에러사항시 (초록색, 파랑색)
+#chmod -R 777 mgr(내가 변경할 파일이나 리렉토리) / : 모든권한부여 명령어
+
+Tip
+덮어씌어진거 확인은 마지막 수정 시간보고 확인
+위아래 키보드 누르면 명령어 순서대로 나타남
+#cd w 누르고 탭 누르면 자동입력 완성됨
+
+//Globals 프로퍼티나 xml파일은 터미널에서 변경가능
+Insert 상태에서 파일 수정 그런 후 esc를 누른다.
+: wq 클론을 친후 wq를 치면 반영되고 나감
+: q! 수정반영안되고 나감
+
+//급할때 최후의 수단
+만일 빌드 false 떠서 묶인게 실패될 경우 export(프로젝트)해서
+War 파일 형식으로 선택해서 묶어서 바탕화면에 만들고 그 파일을 리눅스터미널 툴에 올린다.
+
+root@dev:/# ls
+app  bin ~~~~  opt  pise  proc  root  run  sbin  snap  srv  swapfile  sys  tmp  usr  var
+root@dev:/# cd logs/
+b2c/ did/ awmgr/ api/
+root@dev:/# cd logs/mgr/mgr.log
+bash: cd: logs/awsmgr/awsmgr.log: Not a directory
+root@dev:/# cat logs/awsmgr/awsmgr.log
+
+[https://withcoding.com/109](https://withcoding.com/109)
+
+명령어 공부하기
