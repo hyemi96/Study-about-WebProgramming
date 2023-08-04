@@ -25,6 +25,7 @@
 ## Mac OS 레디스 설치
 - Install Redis on macOS
  
+## 레디스 설명
 
 * db-engines.com 에서 key, value 저장소 중 가장 순위가 높습니다.
 
