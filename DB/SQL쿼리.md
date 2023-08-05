@@ -1,6 +1,54 @@
 # 마이바티스, index 사용한 경험
+- 예시)
+- SELECT *
+FROM table_name
+WHERE contract_number IN 
+<foreach collection="orderList" item="item" open="(" separator="," close=")">
+  #{item}
+</foreach>
+ORDER BY 
+  CASE 
+    <foreach collection="orderList" item="item" index="index" separator=" ">
+      WHEN contract_number = #{item}
+        <choose>
+          <when test="index % 2 == 0">
+            AND price_table = '02' THEN #{index+1}
+          </when>
+          <otherwise>
+            AND price_table = '01' THEN #{index+1}
+          </otherwise>
+        </choose>
+      </when>
+      WHEN contract_number = #{item}
+        <choose>
+          <when test="index % 2 == 0">
+            AND price_table = '04' THEN #{index+1}
+          </when>
+          <otherwise>
+            AND price_table = '03' THEN #{index+1}
+          </otherwise>
+        </choose>
+      </when>
+    </foreach>
+  END
 
 # order by 에 파라미터값을 넣어서 직접 order by 를 만든경험
+- 예시)
+- SELECT *
+FROM table_name
+WHERE contract_number IN ('계약번호1', '계약번호2', '계약번호3', ...)
+ORDER BY
+    CASE 
+        WHEN contract_number = '계약번호1' AND price_table = '02' THEN 1
+        WHEN contract_number = '계약번호1' AND price_table = '01' THEN 2
+        WHEN contract_number = '계약번호2' AND price_table = '04' THEN 3
+        WHEN contract_number = '계약번호2' AND price_table = '03' THEN 4
+        WHEN contract_number = '계약번호3' AND price_table = '02' THEN 5
+        WHEN contract_number = '계약번호3' AND price_table = '01' THEN 6
+        WHEN contract_number = '계약번호1' AND price_table = '04' THEN 7
+        WHEN contract_number = '계약번호1' AND price_table = '03' THEN 8
+        ELSE 9
+    END;
 
 # moerge into 쿼리 사용
 - 업데이트 할대 조건 식 사용했던 방법
